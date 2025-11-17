@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Mantenedor de Contratos - Teletón</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --rojo-teleton: #D71920;
+    --verde-teleton: #6EB43F;
+    --azul-teleton: #003366;
+    --gris-fondo: #F5F5F5;
+    --gris-claro: #E9E9E9;
+  }
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    margin: 0;
+    background-color: var(--gris-fondo);
+    color: #222;
+  }
+  header {
+    background-color: var(--rojo-teleton);
+    color: #fff;
+    padding: 12px 25px;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  .filtros {
+    background-color: #f8f8f8;
+    border-bottom: 3px solid var(--rojo-teleton);
+    padding: 15px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+    align-items: end;
+  }
+  label {
+    font-weight: 600;
+    color: var(--azul-teleton);
+    display: block;
+    margin-bottom: 4px;
+  }
+  select, input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  .botones-filtros {
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .btn-limpiar {
+    background-color: var(--verde-teleton);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .btn-limpiar:hover {
+    background-color: #5ea132;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  th {
+    background-color: var(--rojo-teleton);
+    color: #fff;
+    padding: 10px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--gris-claro);
+    font-size: 14px;
+  }
+  tr:hover {
+    background-color: #f9f9f9;
+  }
+  .acciones button {
+    background-color: var(--azul-teleton);
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+  }
+  .acciones button:hover {
+    background-color: var(--verde-teleton);
+  }
+  .footer {
+    padding: 12px 20px;
+    background-color: #fafafa;
+    border-top: 2px solid var(--rojo-teleton);
+    text-align: right;
+    font-weight: 600;
+    color: var(--azul-teleton);
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+  }
+  .modal.active {
+    display: flex;
+  }
+  .modal-content {
+    background: #fff;
+    width: 85vw;
+    max-width: 1100px;
+    height: 85vh;
+    border-radius: 10px;
+    overflow: auto;
+    box-shadow: 0 8px 33px rgba(0,0,0,0.16);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-header {
+    background: var(--rojo-teleton);
+    color: #fff;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+  }
+  .modal-header button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    flex-grow: 1;
+  }
+</style>
+</head>
+<body>
+<div style="background:#fff; border-radius:7px; margin:16px 12px 0 12px; padding:0; border:1px solid #ececec; display:flex; align-items:center; min-height:70px;">
+  <img src="image.jpg" alt="Teletón" style="height:56px;margin-left:15px;margin-right:12px;">
+  <span style="margin-left:6px; font-size:26px; font-weight:700; color:#222; font-family:'Nunito Sans',sans-serif;">Teletón</span>
+  <span style="font-size:16px; margin-left:18px; color:#333;">Menú ▼</span>
+  <div style="flex:1"></div>
+  <span style="font-size:15px; color:#333; margin-right:14px;">
+    <span style="background:#D71920;color:#fff; font-weight:700; border-radius:5px; padding:5px 18px 5px 11px; margin-right:8px; display:inline-block;">10</span>
+    <span style="font-weight:700;">Cesar Jimenez</span>
+    <span style="color:#888; font-size:12px; font-weight:400; margin-left:6px;">IT 131 - SANTIAGO</span>
+    <span style="margin-left:4px; font-size:16px; color:#888;">&#128100;</span>
+  </span>
+</div>
+
+
+<header>Administrador Ayudas Técnicas</header>
+<div class="container">
+  <div class="filtros" id="filtrosForm">
+
+    <!-- FILTRO INSTITUTO -->
+    <div>
+      <label>Instituto</label>
+      <select id="filtroInstituto">
+        <option value="">Selecciona instituto</option>
+        <option value="Metropolitana">Metropolitana</option>
+        <option value="Valparaíso">Valparaíso</option>
+        <option value="Arica">Arica</option>
+        <option value="Coquimbo">Coquimbo</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="especialidad">Especialidad</label>
+      <select id="especialidad">
+        <option value="">Selecciona especialidad</option>
+        <option value="Kinesiología">Kinesiología</option>
+        <option value="Terapia Ocupacional">Terapia Ocupacional</option>
+      </select>
+    </div>
+    <div>
+      <label for="profesional">Profesional</label>
+      <select id="profesional">
+        <option value="">Selecciona profesional</option>
+        <option value="Morales Vilca Karen">Morales Vilca Karen</option>
+        <option value="Tapia Soto Claudia">Tapia Soto Claudia</option>
+        <option value="García Pasten Verónica">García Pasten Verónica</option>
+      </select>
+    </div>
+    <div>
+      <label for="tipoAyuda">Tipo ayuda técnica</label>
+      <select id="tipoAyuda">
+        <option value="">Selecciona tipo ayuda técnica</option>
+        <option value="Silla de ruedas">Silla de ruedas</option>
+        <option value="Mesa cajón">Mesa cajón</option>
+        <option value="Andador">Andador</option>
+      </select>
+    </div>
+    <div>
+      <label for="fechaDesde">Fecha indicación desde</label>
+      <input id="fechaDesde" type="date" />
+    </div>
+    <div>
+      <label for="fechaHasta">Fecha indicación hasta</label>
+      <input id="fechaHasta" type="date" />
+    </div>
+    <div>
+      <label for="filterEstado">Estado contrato</label>
+      <select id="filterEstado">
+        <option value="">Selecciona estado</option>
+        <option value="EMITIDO">Emitido</option>
+        <option value="PENDIENTE">Lista de Espera</option>
+        <option value="COMODATO">Comodato</option>
+      </select>
+    </div>
+    <div class="botones-filtros">
+      <button class="btn-limpiar" id="btnLimpiar">Limpiar filtros</button>
+    </div>
+  </div>
+
+  <table id="tablaContratos" aria-label="Tabla de contratos">
+    <thead>
+      <tr>
+        <th>Correlativo</th>
+        <th>Paciente</th>
+        <th>Tipo ayuda técnica</th>
+        <th>Correlativo FIN700</th> 
+        <th>Fecha indicación</th>
+        <th>Médico</th>
+        <th>Evaluador</th>
+        <th>Instituto</th> <!-- COLUMNA NUEVA -->
+        <th>Estado indicación</th>
+        <th>Estado contrato</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody id="tablaContratosBody">
+
+      <tr data-instituto="Metropolitana">
+        <td>69558</td>
+        <td>94791 - CAEL FERNANDO TARQUI MARQUEZ</td>
+        <td>Silla de ruedas estándar</td>
+        <td>FIN700</td>
+        <td>26/06/2025</td>
+        <td>Tapia Soto Claudia</td>
+        <td>Morales Vilca Karen</td>
+        <td>Metropolitana</td>
+        <td>Comodato</td>
+        <td data-estado="COMODATO">COMODATO</td>
+        <td class="acciones"><button type="button">Ver contrato</button></td>
+      </tr>
+
+      <tr data-instituto="Arica">
+        <td>67966</td>
+        <td>130103 - BENJAMIN ISAAC LORENZO CRUZ SALINAS</td>
+        <td>Mesa cajón chica</td>
+        <td>FIN701</td>
+        <td>29/10/2025</td>
+        <td>García Pasten Verónica</td>
+        <td>Morales Vilca Karen</td>
+        <td>Arica</td>
+        <td>Evaluado</td>
+        <td data-estado="PENDIENTE">LISTA DE ESPERA</td>
+        <td class="acciones"><button type="button">Ver contrato</button></td>
+      </tr>
+
+      <tr data-instituto="Coquimbo">
+        <td>70021</td>
+        <td>120220 - MATÍAS JAVIER ROJAS LARA</td>
+        <td>Andador</td>
+        <td>FIN702</td>
+        <td>02/11/2025</td>
+        <td>Tapia Soto Claudia</td>
+        <td>Morales Vilca Karen</td>
+        <td>Coquimbo</td>
+        <td>Comodato</td>
+        <td data-estado="COMODATO">COMODATO</td>
+        <td class="acciones"><button type="button">Ver contrato</button></td>
+      </tr>
+
+      <tr data-instituto="Valparaíso">
+        <td>71001</td>
+        <td>101020 - VICENTE FIGUEROA PUEBLA</td>
+        <td>Silla neurológica</td>
+        <td>FIN703</td>
+        <td>12/11/2025</td>
+        <td>Tapia Soto Claudia</td>
+        <td>Morales Vilca Karen</td>
+        <td>Valparaíso</td>
+        <td>Finalizada</td>
+        <td data-estado="EMITIDO">EMITIDO</td>
+        <td class="acciones"><button type="button">Ver contrato</button></td>
+      </tr>
+
+      <tr data-instituto="Metropolitana">
+        <td>71040</td>
+        <td>121212 - Camila Bastias Rios</td>
+        <td>Silla neurológica</td>
+        <td>FIN704</td>
+        <td>12/11/2025</td>
+        <td>Tapia Soto Claudia</td>
+        <td>Morales Vilca Karen</td>
+        <td>Metropolitana</td>
+        <td>Anulada</td>
+        <td data-estado="ANULADO">ANULADO</td>
+        <td class="acciones"><button type="button">Ver contrato</button></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="footer">Total de indicaciones: 5</div>
+</div>
+
+<!-- MODALES -->
+<div class="modal" id="modalPDF">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>Contrato firmado</span>
+      <button type="button" id="btnCerrarModalPDF">×</button>
+    </div>
+    <iframe id="iframePDF" src=""></iframe>
+  </div>
+</div>
+
+<div class="modal" id="modalTutor">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>Prevalidación y firma tutor legal</span>
+      <button type="button" id="btnCerrarModalTutor">×</button>
+    </div>
+    <iframe id="iframeTutor" src=""></iframe>
+  </div>
+</div>
+
+<script>
+  const urlContratoFirmado = "https://docs.google.com/gview?url=https://raw.githubusercontent.com/cesarjimenezb-design/Contrato-Ayuda-Tecnica/main/Contrato%20de%20Entrega%20de%20Ayuda%20Técnica.pdf&embedded=true";
+  const urlPrevalidacion = "https://cesarjimenezb-design.github.io/Prevalidacion-entregaAT/";
+
+  function filtrarTabla() {
+
+    const institutoFiltro = document.getElementById('filtroInstituto').value.toLowerCase();
+    const especialidadFiltro = document.getElementById('especialidad').value.toLowerCase();
+    const profesionalFiltro = document.getElementById('profesional').value.toLowerCase();
+    const tipoAyudaFiltro = document.getElementById('tipoAyuda').value.toLowerCase();
+    const fechaDesdeFiltro = document.getElementById('fechaDesde').value;
+    const fechaHastaFiltro = document.getElementById('fechaHasta').value;
+    const estadoContratoFiltro = document.getElementById('filterEstado').value.toUpperCase();
+
+    const filas = document.querySelectorAll('#tablaContratosBody tr');
+
+    filas.forEach(fila => {
+
+      const instituto = fila.dataset.instituto.toLowerCase();
+      const especialidad = fila.cells[2].textContent.toLowerCase();
+      const profesional = fila.cells[5].textContent.toLowerCase();
+      const tipoAyuda = fila.cells[2].textContent.toLowerCase();
+      const fecha = fila.cells[4].textContent.split("/").reverse().join("-");
+      const estadoContrato = fila.querySelector('[data-estado]').getAttribute('data-estado').toUpperCase();
+
+      let mostrar = true;
+
+      if (institutoFiltro && instituto !== institutoFiltro) mostrar = false;
+      if (especialidadFiltro && !especialidad.includes(especialidadFiltro)) mostrar = false;
+      if (profesionalFiltro && !profesional.includes(profesionalFiltro)) mostrar = false;
+      if (tipoAyudaFiltro && !tipoAyuda.includes(tipoAyudaFiltro)) mostrar = false;
+      if (estadoContratoFiltro && estadoContratoFiltro !== estadoContrato) mostrar = false;
+      if (fechaDesdeFiltro && fecha < fechaDesdeFiltro) mostrar = false;
+      if (fechaHastaFiltro && fecha > fechaHastaFiltro) mostrar = false;
+
+      fila.style.display = mostrar ? "" : "none";
+    });
+  }
+
+  function limpiarFiltros() {
+    document.getElementById('filtroInstituto').value = "";
+    document.getElementById('especialidad').value = "";
+    document.getElementById('profesional').value = "";
+    document.getElementById('tipoAyuda').value = "";
+    document.getElementById('fechaDesde').value = "";
+    document.getElementById('fechaHasta').value = "";
+    document.getElementById('filterEstado').value = "";
+    filtrarTabla();
+  }
+
+  function verContrato(boton) {
+    const fila = boton.closest('tr');
+    const estado = fila.querySelector('[data-estado]').getAttribute('data-estado');
+
+    if (estado === 'EMITIDO') {
+      document.getElementById('iframePDF').src = urlContratoFirmado;
+      document.getElementById('modalPDF').classList.add('active');
+    } else if (estado === 'COMODATO' || estado === 'PENDIENTE') {
+      document.getElementById('iframeTutor').src = urlPrevalidacion;
+      document.getElementById('modalTutor').classList.add('active');
+    }
+  }
+
+  document.getElementById('btnCerrarModalPDF').addEventListener('click', () => {
+    document.getElementById('modalPDF').classList.remove('active');
+    document.getElementById('iframePDF').src = '';
+  });
+  document.getElementById('btnCerrarModalTutor').addEventListener('click', () => {
+    document.getElementById('modalTutor').classList.remove('active');
+    document.getElementById('iframeTutor').src = '';
+  });
+
+  window.onload = () => {
+
+    document.querySelectorAll('[data-estado]').forEach(td => {
+      if(td.getAttribute('data-estado') === 'PENDIENTE') td.innerText = 'LISTA DE ESPERA';
+    });
+
+    document.querySelectorAll('.acciones button').forEach(button => {
+      button.addEventListener('click', function() {
+        verContrato(this);
+      });
+    });
+
+    // Filtros
+    document.getElementById('filtroInstituto').addEventListener('change', filtrarTabla);
+    document.getElementById('especialidad').addEventListener('change', filtrarTabla);
+    document.getElementById('profesional').addEventListener('change', filtrarTabla);
+    document.getElementById('tipoAyuda').addEventListener('change', filtrarTabla);
+    document.getElementById('fechaDesde').addEventListener('change', filtrarTabla);
+    document.getElementById('fechaHasta').addEventListener('change', filtrarTabla);
+    document.getElementById('filterEstado').addEventListener('change', filtrarTabla);
+    document.getElementById('btnLimpiar').addEventListener('click', limpiarFiltros);
+
+    filtrarTabla();
+  };
+</script>
+
+</body>
+</html>
