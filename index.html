@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mantenedor de Contratos - Teletón (Final)</title>
+<title>Mantenedor de Contratos - Teletón (Final) - v2</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -66,6 +66,9 @@
   /* modal historial específico (puede heredar .modal .modal-card) */
   #modalHistorial .modal-card{max-width:1100px}
   #iframeHistorial{width:100%; height:100%; border:none}
+
+  /* estilo fila devuelta */
+  tr.devuelto td { color: #1a6f2b; font-weight:700; }
 </style>
 </head>
 <body>
@@ -134,7 +137,8 @@
           <select id="filterEstado">
             <option value="">Todos</option>
             <option value="EMITIDO">Emitido</option>
-            <option value="PENDIENTE">Lista de Espera</option>
+            <option value="PENDIENTE">Lista de Espera (legacy)</option>
+            <option value="SOLICITADO">Solicitado</option>
             <option value="COMODATO">Comodato</option>
             <option value="ANULADO">Anulado</option>
           </select>
@@ -145,14 +149,15 @@
       </div>
 
       <div class="toolbar-row">
-        <button id="btnAgregar" class="btn-toolbar" title="Agregar"><i class="fa-solid fa-plus"></i></button>
+        <button id="btnAgregar" class="btn-toolbar" title="Notificaciones"><i class="fa-solid fa-bell"></i></button>
         <button id="btnSalud" class="btn-toolbar" title="Agendar" disabled><i class="fa-solid fa-kit-medical"></i></button>
         <button id="btnDocumento" class="btn-toolbar" title="Firma Documento" disabled><i class="fa-solid fa-file-pen"></i></button>
         <button id="btnEditar" class="btn-toolbar" title="Contactar" disabled><i class="fa-solid fa-phone"></i></button>
         <button id="btnEliminar" class="btn-toolbar" title="Anular" disabled><i class="fa-solid fa-xmark"></i></button>
-        <button id="btnCero" class="btn-toolbar" title="Ver Indicación" disabled><i class="fa-solid fa-eye"></i></button>
+        <button id="btnCero" class="btn-toolbar" title="Devolución AT" disabled><i class="fa-solid fa-warehouse"></i></button>
         <button id="btnAccesibilidad" class="btn-toolbar" title="Ciclopit" disabled><i class="fa-solid fa-wheelchair"></i></button>
         <button id="btnTiempo" class="btn-toolbar" title="Historial" disabled><i class="fa-solid fa-clock"></i></button>
+        <button id="btnExcel" class="btn-toolbar" title="Exportar a Excel"><i class="fa-solid fa-file-excel"></i></button>
       </div>
     </div>
 
@@ -175,7 +180,7 @@
           </tr>
         </thead>
         <tbody id="tablaContratosBody">
-          <!-- 10 ejemplos: nota: Estado indicación = indicado/evaluado/lista de espera -->
+          <!-- ejemplos actualizados para mostrar nuevos mapeos de estados -->
           <tr data-instituto="Metropolitana">
             <td>69558</td>
             <td>94791 - CAEL FERNANDO TARQUI MARQUEZ</td>
@@ -186,10 +191,9 @@
             <td>Morales Vilca Karen</td>
             <td>Metropolitana</td>
             <td>Indicado</td>
-            <td data-estado="COMODATO">COMODATO</td>
+            <td data-estado=""></td>
             <td class="acciones">
               <button type="button" class="ver-btn">Ver contrato</button>
-              <!-- ver indicación inserted by JS -->
             </td>
           </tr>
 
@@ -203,7 +207,7 @@
             <td>Morales Vilca Karen</td>
             <td>Arica</td>
             <td>Evaluado</td>
-            <td data-estado="PENDIENTE">LISTA DE ESPERA</td>
+            <td data-estado="SOLICITADO">SOLICITADO</td>
             <td class="acciones">
               <button type="button" class="ver-btn">Ver contrato</button>
             </td>
@@ -219,7 +223,7 @@
             <td>Morales Vilca Karen</td>
             <td>Coquimbo</td>
             <td>Indicado</td>
-            <td data-estado="COMODATO">COMODATO</td>
+            <td data-estado=""></td>
             <td class="acciones">
               <button type="button" class="ver-btn">Ver contrato</button>
             </td>
@@ -234,7 +238,7 @@
             <td>Tapia Soto Claudia</td>
             <td>Morales Vilca Karen</td>
             <td>Valparaíso</td>
-            <td>Evaluado</td>
+            <td>Finalizada</td>
             <td data-estado="EMITIDO">EMITIDO</td>
             <td class="acciones">
               <button type="button" class="ver-btn">Ver contrato</button>
@@ -251,7 +255,7 @@
             <td>Morales Vilca Karen</td>
             <td>Metropolitana</td>
             <td>Lista de Espera</td>
-            <td data-estado="PENDIENTE">LISTA DE ESPERA</td>
+            <td data-estado="SOLICITADO">SOLICITADO</td>
             <td class="acciones">
               <button type="button" class="ver-btn">Ver contrato</button>
             </td>
@@ -267,7 +271,7 @@
             <td>Tapia Soto Claudia</td>
             <td>Valparaíso</td>
             <td>Indicado</td>
-            <td data-estado="COMODATO">COMODATO</td>
+            <td data-estado=""></td>
             <td class="acciones">
               <button type="button" class="ver-btn">Ver contrato</button>
             </td>
@@ -299,7 +303,7 @@
             <td>Morales Vilca Karen</td>
             <td>Metropolitana</td>
             <td>Lista de Espera</td>
-            <td data-estado="PENDIENTE">LISTA DE ESPERA</td>
+            <td data-estado="SOLICITADO">SOLICITADO</td>
             <td class="acciones">
               <button type="button" class="ver-btn">Ver contrato</button>
             </td>
@@ -315,7 +319,7 @@
             <td>Morales Vilca Karen</td>
             <td>Arica</td>
             <td>Indicado</td>
-            <td data-estado="COMODATO">COMODATO</td>
+            <td data-estado=""></td>
             <td class="acciones">
               <button type="button" class="ver-btn">Ver contrato</button>
             </td>
@@ -341,7 +345,7 @@
       </table>
     </div>
 
-    <div class="footer">Total de indicaciones: 10</div>
+    <div class="footer">Total de indicaciones: 11</div>
   </div>
 
   <!-- MODAL: Ver Contrato (PDF) -->
@@ -353,6 +357,33 @@
       </div>
       <div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
         <iframe id="iframePDF" style="width:100%; height:100%; border:none"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Devolución -->
+  <div id="modalDevolucion" class="modal" aria-hidden="true" style="display:none; align-items:center; justify-content:center; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000;">
+    <div class="modal-card" style="max-width:420px; background:#fff; border-radius:8px; padding:24px;">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>Devolución de Ayuda Técnica</div>
+        <button id="btnCerrarModalDevolucion" title="Cerrar" style="background:none;border:none;color:#d71920;font-size:20px;cursor:pointer">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="formDevolucion">
+          <div class="form-row">
+            <label for="inputArticulo">Artículo:</label>
+            <input type="text" id="inputArticulo" class="form-control" required />
+          </div>
+          <div class="form-row">
+            <label for="inputCantidad">Cantidad:</label>
+            <input type="number" id="inputCantidad" class="form-control" min="1" value="1" required />
+          </div>
+          <div class="form-row">
+            <label for="inputObservacion">Observaciones:</label>
+            <textarea id="inputObservacion" class="form-control" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="background:#d71920;border:none;">Registrar devolución</button>
+        </form>
       </div>
     </div>
   </div>
@@ -401,16 +432,18 @@
         <div class="form-row">
           <label for="motivoAnulacion">Motivos de eliminación</label>
           <select id="motivoAnulacion">
-            <option>Error de digitación</option>
-            <option>Duplicación de indicación</option>
-            <option>No requiere cambio de silla</option>
+            <option>Inidcación mal ingresada</option>
+            <option>No necesita ayuda técnica</option>
+            <option>Se rechaza ayuda  técnica</option>
             <option>Paciente pasivo</option>
-            <option>Otro</option>
+            <option>Existe otra indicación de comodato sin entregar</option>
+	    <option>Eliminado lista de espera por 3 fallas</option>
+	    <option>Eliminado lista de espera por 2 ausencias</option>
           </select>
         </div>
 
         <div class="form-row">
-          <label for="obsAnulacion">Observación (opcional)</label>
+          <label for="obsAnulacion">Observación (Obligatorio)</label>
           <textarea id="obsAnulacion" placeholder="Agrega una observación que complemente el motivo..."></textarea>
         </div>
       </div>
@@ -480,6 +513,7 @@
     </div>
   </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* URLs de ejemplo */
 const urlContratoFirmado = "https://docs.google.com/gview?url=https://raw.githubusercontent.com/cesarjimenezb-design/Contrato-Ayuda-Tecnica/main/Contrato%20de%20Entrega%20de%20Ayuda%20T%C3%A9cnica.pdf&embedded=true";
@@ -500,12 +534,15 @@ function filtrarTabla(){
     const fechaText = fila.cells[4] ? fila.cells[4].textContent : '';
     const fecha = fechaText ? fechaText.split("/").reverse().join("-") : '';
     const estadoTd = fila.querySelector('[data-estado]');
-    const estadoContrato = estadoTd ? estadoTd.getAttribute('data-estado').toUpperCase() : '';
+    const estadoContrato = estadoTd ? (estadoTd.getAttribute('data-estado')||'').toUpperCase() : '';
 
     let mostrar = true;
     if (institutoFiltro && instituto !== institutoFiltro) mostrar = false;
     if (tipoAyudaFiltro && !tipoAyuda.includes(tipoAyudaFiltro)) mostrar = false;
-    if (estadoContratoFiltro && estadoContratoFiltro !== estadoContrato) mostrar = false;
+    if (estadoContratoFiltro) {
+      // allow filtering by legacy PENDIENTE (kept) or SOLICITADO/EMITIDO/COMODATO/ANULADO
+      if (estadoContrato !== estadoContratoFiltro) mostrar = false;
+    }
     if (fechaDesdeFiltro && fecha && fecha < fechaDesdeFiltro) mostrar = false;
     if (fechaHastaFiltro && fecha && fecha > fechaHastaFiltro) mostrar = false;
 
@@ -533,10 +570,19 @@ function limpiarFiltros(){
 
 /* VISUALIZACION DE CONTRATO segun estado */
 function verContratoDesdeFila(fila){
-  const estado = fila.querySelector('[data-estado]') ? fila.querySelector('[data-estado]').getAttribute('data-estado') : '';
-  if (estado === 'EMITIDO') {
+  const estado = fila.querySelector('[data-estado]') ? (fila.querySelector('[data-estado]').getAttribute('data-estado')||'') : '';
+  if (estado === 'EMITIDO' || estado === 'COMODATO') {
     document.getElementById('iframePDF').src = urlContratoFirmado;
     document.getElementById('modalPDF').classList.add('active');
+  } else if (estado === 'SOLICITADO' || estado === 'PENDIENTE' || estado === '') {
+    // no contrato firmado -> abrir prevalidación/tutor view
+    document.getElementById('iframeTutor').src = urlPrevalidacion;
+    document.getElementById('modalTutor').classList.add('active');
+  } else if (estado === 'ANULADO') {
+    // show history instead for anulados
+    const src = urlHistorialAT;
+    document.getElementById('iframeHistorial').src = src;
+    document.getElementById('modalHistorial').classList.add('active');
   } else {
     document.getElementById('iframeTutor').src = urlPrevalidacion;
     document.getElementById('modalTutor').classList.add('active');
@@ -558,7 +604,7 @@ function verIndicacionDesdeFila(fila){
   const evaluador = fila.cells[6] ? fila.cells[6].textContent.trim() : '';
   const instituto = fila.cells[7] ? fila.cells[7].textContent.trim() : '';
   const estadoIndic = fila.cells[8] ? fila.cells[8].textContent.trim() : '';
-  const estadoContrato = fila.querySelector('[data-estado]') ? fila.querySelector('[data-estado]').getAttribute('data-estado') : '';
+  const estadoContrato = fila.querySelector('[data-estado]') ? (fila.querySelector('[data-estado]').getAttribute('data-estado')||'') : '';
 
   // Montar el HTML de la indicación — he mantenido el formato que me enviaste
   const html = `
@@ -590,12 +636,13 @@ function verIndicacionDesdeFila(fila){
 
     <div class='section-title'>Observaciones</div>
     <div class='section'>
-      <div class='row'><div class='cell' style="flex:1 1 100%"><span class='label'>Comentario:</span> El paciente y cuidador comprenden el uso de la ayuda técnica. Se recomienda seguimiento en 3 meses.</div></div>
+      <div class='row'><div class='cell' style="flex:1 1 100%"><span class='label'>Comentario:</span> El paciente y cuidador comprenden el uso de la ayuda técnica. Se recomienda seguimiento en 3 meses. Estado contrato actual: ${estadoContrato || '(sin contrato)'}</div></div>
     </div>
   `;
 
   document.getElementById('contenidoIndicacion').innerHTML = html;
   document.getElementById('modalIndicacion').classList.add('active');
+
 }
 
 /* Cerrar modales PDF/Tutor/Indicacion */
@@ -661,7 +708,7 @@ function setBtn(id,enabled){
 function obtenerDatosFila(){
   if (!filaSeleccionada) return null;
   const tdEstado = filaSeleccionada.querySelector('[data-estado]');
-  const estadoContrato = tdEstado ? tdEstado.getAttribute('data-estado') : '';
+  const estadoContrato = tdEstado ? (tdEstado.getAttribute('data-estado')||'') : '';
   const correl = filaSeleccionada.cells[0] ? filaSeleccionada.cells[0].textContent.trim() : '';
   const paciente = filaSeleccionada.cells[1] ? filaSeleccionada.cells[1].textContent.trim() : '';
   return { estadoContrato, correl, paciente };
@@ -674,24 +721,25 @@ function actualizarToolbar(){
   botones.forEach(id=>setBtn(id,false));
   if (!datos) return;
   const st = (datos.estadoContrato || '').toUpperCase();
-  if (st === 'PENDIENTE' || st === 'LISTA DE ESPERA') {
+  // considerar SOLICITADO como "lista de espera/pendiente"
+  if (st === 'PENDIENTE' || st === 'LISTA DE ESPERA' || st === 'SOLICITADO' || st === '') {
     // lista de espera: Agendar, Editar, Anular, Ver Indicación, Historial
     setBtn('btnSalud', true);
     setBtn('btnEditar', true);
     setBtn('btnEliminar', true);
     setBtn('btnCero', true);
     setBtn('btnTiempo', true);
-    setBtn('btnDocumento', false); // segun tu opcion 2
+    setBtn('btnDocumento', false); // documento solo si hay contrato emitido/comodato
     setBtn('btnAccesibilidad', false);
-  } else if (st === 'EMITIDO') {
-    setBtn('btnDocumento', true);
-    setBtn('btnCero', true);
-    setBtn('btnTiempo', true);
-  } else if (st === 'COMODATO') {
+  } else if (st === 'EMITIDO' || st === 'COMODATO') {
     setBtn('btnDocumento', true);
     setBtn('btnCero', true);
     setBtn('btnTiempo', true);
   } else if (st === 'ANULADO') {
+    setBtn('btnTiempo', true);
+  } else {
+    // default fallback
+    setBtn('btnCero', true);
     setBtn('btnTiempo', true);
   }
 }
@@ -751,9 +799,35 @@ const btnCerrarModalHistorial = document.getElementById('btnCerrarModalHistorial
 /* inicialización de handlers globales */
 document.addEventListener('DOMContentLoaded', ()=>{
 
-  // transformar texto PENDIENTE -> LISTA DE ESPERA (visualmente)
-  document.querySelectorAll('[data-estado]').forEach(td=>{
-    if (td.getAttribute('data-estado') === 'PENDIENTE') td.textContent = 'LISTA DE ESPERA';
+  // --- NUEVAS REGLAS: mapear Estado indicación -> Estado contrato (sin cambiar diseño)
+  //  - Indicado -> estado contrato en blanco (no hay contrato aún)
+  //  - Evaluado -> puede ser SOLICITADO o EMITIDO (se deja como venga si ya tiene data-estado)
+  //  - Lista de Espera -> SOLICITADO (unificar)
+  //  - Finalizada -> EMITIDO
+  document.querySelectorAll('#tablaContratosBody tr').forEach(tr=>{
+    const estadoIndicText = tr.cells[8] ? (tr.cells[8].textContent||'').trim().toLowerCase() : '';
+    const tdEstado = tr.querySelector('[data-estado]');
+    // if there is no tdEstado, skip
+    if (!tdEstado) return;
+
+    if (estadoIndicText === 'indicado') {
+      // dejar data-estado vacío (sin contrato)
+      tdEstado.setAttribute('data-estado','');
+      tdEstado.textContent = '';
+    } else if (estadoIndicText === 'lista de espera' || estadoIndicText === 'lista de espera') {
+      tdEstado.setAttribute('data-estado','SOLICITADO');
+      tdEstado.textContent = 'SOLICITADO';
+    } else if (estadoIndicText === 'finalizada' || estadoIndicText === 'finalizado' ) {
+      tdEstado.setAttribute('data-estado','EMITIDO');
+      tdEstado.textContent = 'EMITIDO';
+    } else {
+      // respetar lo que ya tenga (por ejemplo si viene COMODATO, EMITIDO, SOLICITADO)
+      // y normalizar texto para PENDIENTE legacy
+      if (tdEstado.getAttribute('data-estado') === 'PENDIENTE') {
+        tdEstado.setAttribute('data-estado','SOLICITADO');
+        tdEstado.textContent = 'SOLICITADO';
+      }
+    }
   });
 
   // insert "Ver indicación" button into each acciones cell (non-destructive)
@@ -866,8 +940,85 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // activar estado inicial de toolbar
   actualizarToolbar();
 
+
+  // EXPORTAR A EXCEL — SOLO FILAS VISIBLES
+  document.getElementById('btnExcel').addEventListener('click', ()=>{
+      const tabla = document.getElementById('tablaContratos');
+      const filasVisibles = [];
+      const headers = [];
+      tabla.querySelectorAll("thead th").forEach(th => headers.push(th.textContent.trim()));
+      filasVisibles.push(headers);
+      tabla.querySelectorAll("tbody tr").forEach(tr =>{
+        if(tr.style.display != "none"){
+          const fila = [];
+          tr.querySelectorAll("td").forEach(td => fila.push(td.innerText.trim()));
+          filasVisibles.push(fila);
+        }
+      });
+      if(filasVisibles.length <= 1){
+        alert("No hay datos visibles para exportar.");
+        return;
+      }
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(filasVisibles);
+      XLSX.utils.book_append_sheet(wb, ws, "Listado");
+      XLSX.writeFile(wb, "Contratos_Exportados.xlsx");
+  });
+
 }); // DOMContentLoaded end
 
+// --- DEVOLUCION: override btnCero para abrir modal y precargar datos, cerrar modal, submit y marcar fila --- 
+document.getElementById('btnCero').onclick = function() {
+  if (!filaSeleccionada) {
+    alert('Selecciona una fila primero');
+    return;
+  }
+  const articulo = filaSeleccionada.cells[2]?.textContent.trim() || '';
+  const correl = filaSeleccionada.cells[0]?.textContent.trim() || '';
+  const paciente = filaSeleccionada.cells[1]?.textContent.trim() || '';
+
+  document.getElementById('inputArticulo').value = articulo;
+  document.getElementById('inputCantidad').value = 1;
+  document.getElementById('inputObservacion').value = `Devolución correlativo: ${correl} - ${paciente}`;
+
+  document.getElementById('modalDevolucion').classList.add('active');
+  // also ensure display flex for legacy inline style
+  document.getElementById('modalDevolucion').style.display = 'flex';
+};
+
+// cerrar modal devolucion por botón
+document.getElementById('btnCerrarModalDevolucion').addEventListener('click', function() {
+  document.getElementById('modalDevolucion').classList.remove('active');
+  document.getElementById('modalDevolucion').style.display = 'none';
+});
+
+// submit del formulario de devolucion
+document.getElementById('formDevolucion').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const articulo = document.getElementById('inputArticulo').value;
+  const cantidad = document.getElementById('inputCantidad').value;
+  const observacion = document.getElementById('inputObservacion').value;
+
+  alert(`Devolución registrada:\nArtículo: ${articulo}\nCantidad: ${cantidad}\nObservaciones: ${observacion}`);
+
+  marcarDevolucionEnFila();
+
+  this.reset();
+  document.getElementById('modalDevolucion').classList.remove('active');
+  document.getElementById('modalDevolucion').style.display = 'none';
+});
+
+// --- MARCAR FILA COMO DEVUELTA ---
+function marcarDevolucionEnFila() {
+  if (!filaSeleccionada) return;
+  const tdEstado = filaSeleccionada.querySelector('[data-estado]');
+  if (tdEstado){
+      tdEstado.setAttribute('data-estado','DEVUELTO');
+      tdEstado.textContent = 'DEVUELTO';
+  }
+  filaSeleccionada.classList.add('devuelto');
+  filaSeleccionada.style.background = '#e8ffea';
+}
 </script>
 </body>
 </html>
