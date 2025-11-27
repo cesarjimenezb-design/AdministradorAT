@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Mantenedor de Contratos - Teletón (Final) - v2</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 <style>
   :root{
@@ -34,7 +33,6 @@
   thead th{background:var(--rojo-teleton); color:#fff; padding:10px; font-weight:700; text-align:left}
   tbody td{padding:10px; border-bottom:1px solid var(--gris-claro); vertical-align:middle}
   tbody tr:hover{background:#fafafa}
-  /* acciones: mejor espacio, wrap y alineado */
   .acciones{display:flex; gap:8px; align-items:center; flex-wrap:wrap; min-width:220px}
   .acciones .ver-btn, .acciones .btn-indicacion, .acciones .btn-notificacion{background:var(--azul-teleton); color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:600}
   .acciones .ver-btn:hover, .acciones .btn-indicacion:hover{background:var(--verde-teleton)}
@@ -48,7 +46,6 @@
   .table-area{height:65vh; overflow:auto}
   .footer{padding:12px 18px; text-align:right; background:#fafafa; border-top:2px solid var(--rojo-teleton); font-weight:600; color:var(--azul-teleton)}
 
-  /* modals */
   .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); z-index:200}
   .modal.active{display:flex}
   .modal-card{background:#fff; width:90%; max-width:920px; max-height:85vh; border-radius:8px; overflow:auto; box-shadow:0 10px 30px rgba(0,0,0,0.25)}
@@ -62,7 +59,6 @@
   textarea{width:100%; min-height:80px; padding:8px; border:1px solid #ccc; border-radius:6px}
   @media (max-width:720px){ .filtros{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .acciones{min-width:160px} }
 
-  /* estilos específicos del modal indicación (mantener separados para no interferir) */
   .indicacion .section-title{background:#E30613;color:#fff;padding:6px;font-weight:bold;margin-top:16px;border-radius:4px}
   .indicacion .section{border:1px solid #ccc;border-radius:8px;padding:12px;margin-top:10px}
   .indicacion .row{display:flex;flex-wrap:wrap;margin-bottom:8px}
@@ -73,6 +69,8 @@
   #modalHistorial .modal-card{max-width:1100px}
   #iframeHistorial{width:100%; height:100%; border:none}
 
+  .stock-alto{color:#1a6f2b; font-weight:700}
+  .stock-bajo{color:#b21214; font-weight:700}
   tr.devuelto td { color: #1a6f2b; font-weight:700; }
 </style>
 </head>
@@ -90,7 +88,6 @@
 <div class="panel-body">
 <div class="panel panel-default">
 <div class="panel-heading">
-<!-- sticky filtros + toolbar -->
 <div class="filtros-wrapper">
 <div class="filtros">
 <div>
@@ -156,17 +153,16 @@
 </div>
 <div class="toolbar-row">
 <button class="btn-toolbar" id="btnAgregar" title="Notificaciones"><i class="fa-solid fa-bell"></i></button>
-<button class="btn-toolbar" disabled="" id="btnSalud" title="Agendar"><i class="fa-solid fa-kit-medical"></i></button>
-<button class="btn-toolbar" disabled="" id="btnDocumento" title="Firma Documento"><i class="fa-solid fa-file-pen"></i></button>
-<button class="btn-toolbar" disabled="" id="btnEditar" title="Contactar"><i class="fa-solid fa-phone"></i></button>
-<button class="btn-toolbar" disabled="" id="btnEliminar" title="Anular"><i class="fa-solid fa-xmark"></i></button>
-<button class="btn-toolbar" disabled="" id="btnCero" title="Devolución AT"><i class="fa-solid fa-warehouse"></i></button>
-<button class="btn-toolbar" disabled="" id="btnAccesibilidad" title="Ciclopit"><i class="fa-solid fa-wheelchair"></i></button>
-<button class="btn-toolbar" disabled="" id="btnTiempo" title="Historial"><i class="fa-solid fa-clock"></i></button>
+<button class="btn-toolbar" disabled id="btnSalud" title="Agendar"><i class="fa-solid fa-kit-medical"></i></button>
+<button class="btn-toolbar" disabled id="btnDocumento" title="Firma Documento"><i class="fa-solid fa-file-pen"></i></button>
+<button class="btn-toolbar" disabled id="btnEditar" title="Contactar"><i class="fa-solid fa-phone"></i></button>
+<button class="btn-toolbar" disabled id="btnEliminar" title="Anular"><i class="fa-solid fa-xmark"></i></button>
+<button class="btn-toolbar" disabled id="btnCero" title="Devolución AT"><i class="fa-solid fa-warehouse"></i></button>
+<button class="btn-toolbar" disabled id="btnAccesibilidad" title="Ciclopit"><i class="fa-solid fa-wheelchair"></i></button>
+<button class="btn-toolbar" disabled id="btnTiempo" title="Historial"><i class="fa-solid fa-clock"></i></button>
 <button class="btn-toolbar" id="btnExcel" title="Exportar a Excel"><i class="fa-solid fa-file-excel"></i></button>
 </div>
 </div>
-<!-- table area -->
 <div class="table-area" id="tableArea">
 <table aria-label="Tabla de contratos" id="tablaContratos">
 <thead>
@@ -186,7 +182,6 @@
 </tr>
 </thead>
 <tbody id="tablaContratosBody">
-<!-- ejemplos actualizados para mostrar nuevos mapeos de estados -->
 <tr data-instituto="Metropolitana"><td>69558</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>94791 - CAEL FERNANDO TARQUI MARQUEZ</td><td>Silla de ruedas estándar</td><td>FIN700</td><td>26/06/2025</td><td>Evaluado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
@@ -242,7 +237,7 @@
 </div>
 <div class="footer">Total de indicaciones: 11</div>
 </div>
-<!-- MODAL: Ver Contrato (PDF) -->
+
 <div aria-hidden="true" class="modal" id="modalPDF">
 <div class="modal-card">
 <div class="modal-header">
@@ -254,7 +249,7 @@
 </div>
 </div>
 </div>
-<!-- MODAL: Devolución -->
+
 <div aria-hidden="true" class="modal" id="modalDevolucion" style="display:none; align-items:center; justify-content:center; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000;">
 <div class="modal-card" style="max-width:420px; background:#fff; border-radius:8px; padding:24px;">
 <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
@@ -265,11 +260,11 @@
 <form id="formDevolucion">
 <div class="form-row">
 <label for="inputArticulo">Artículo:</label>
-<input class="form-control" id="inputArticulo" required="" type="text"/>
+<input class="form-control" id="inputArticulo" required type="text"/>
 </div>
 <div class="form-row">
 <label for="inputCantidad">Cantidad:</label>
-<input class="form-control" id="inputCantidad" min="1" required="" type="number" value="1"/>
+<input class="form-control" id="inputCantidad" min="1" required type="number" value="1"/>
 </div>
 <div class="form-row">
 <label for="inputObservacion">Observaciones:</label>
@@ -280,7 +275,7 @@
 </div>
 </div>
 </div>
-<!-- MODAL: Prevalidacion (tutor) -->
+
 <div aria-hidden="true" class="modal" id="modalTutor">
 <div class="modal-card">
 <div class="modal-header">
@@ -292,7 +287,7 @@
 </div>
 </div>
 </div>
-<!-- MODAL: Indicación (nuevo, con contenido formateado) -->
+
 <div aria-hidden="true" class="modal" id="modalIndicacion">
 <div class="modal-card">
 <div class="modal-header">
@@ -300,7 +295,6 @@
 <button class="modal-close-icon" id="btnCerrarModalIndicacion" title="Cerrar">×</button>
 </div>
 <div class="modal-body">
-<!-- Este contenedor se rellena dinámicamente -->
 <div class="indicacion" id="contenidoIndicacion"></div>
 </div>
 <div class="modal-footer">
@@ -309,7 +303,7 @@
 </div>
 </div>
 </div>
-<!-- MODAL: Anular (CONFIRM) -->
+
 <div aria-hidden="true" class="modal" id="modalAnular">
 <div class="modal-card">
 <div class="modal-header">
@@ -341,7 +335,7 @@
 </div>
 </div>
 </div>
-<!-- MODAL: Agendar -->
+
 <div aria-hidden="true" class="modal" id="modalAgendar">
 <div class="modal-card">
 <div class="modal-header">
@@ -385,7 +379,7 @@
 </div>
 </div>
 </div>
-<!-- MODAL: HISTORIAL -->
+
 <div aria-hidden="true" class="modal" id="modalHistorial">
 <div class="modal-card">
 <div class="modal-header">
@@ -397,16 +391,13 @@
 </div>
 </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-/* URLs de ejemplo */
 const urlContratoFirmado = "https://cesarjimenezb-design.github.io/Contrato-Ayuda-Tecnica/";
 const urlPrevalidacion = "https://cesarjimenezb-design.github.io/Prevalidacion-entregaAT/";
 const urlHistorialAT = "https://cesarjimenezb-design.github.io/Historial-entrega-AT/";
 
-/* ========================
-   STOCK — OPCIÓN A
-   ======================== */
 const stockArticulos = {
   "silla de ruedas": true,
   "silla de ruedas estándar": false,
@@ -416,7 +407,6 @@ const stockArticulos = {
   "andador": false
 };
 
-/* FILTRADO */
 function filtrarTabla(){
   const institutoFiltro = document.getElementById('filtroInstituto').value.toLowerCase();
   const tipoAyudaFiltro = document.getElementById('tipoAyuda').value.toLowerCase();
@@ -426,8 +416,8 @@ function filtrarTabla(){
 
   document.querySelectorAll('#tablaContratosBody tr').forEach(fila=>{
     const instituto = (fila.dataset.instituto||'').toLowerCase();
-    const tipoAyuda = (fila.cells[2] && fila.cells[2].textContent||'').toLowerCase();
-    const fechaText = fila.cells[4] ? fila.cells[4].textContent : '';
+    const tipoAyuda = (fila.cells[5] && fila.cells[5].textContent||'').toLowerCase();
+    const fechaText = fila.cells[7] ? fila.cells[7].textContent : '';
     const fecha = fechaText ? fechaText.split("/").reverse().join("-") : '';
     const estadoTd = fila.querySelector('[data-estado]');
     const estadoContrato = estadoTd ? (estadoTd.getAttribute('data-estado')||'') : '';
@@ -443,7 +433,6 @@ function filtrarTabla(){
 
     fila.style.display = mostrar ? "" : "none";
 
-    // if hidden and selected, deselect
     if (fila.classList.contains('seleccionada') && fila.style.display === 'none') {
       fila.classList.remove('seleccionada');
       filaSeleccionada = null;
@@ -463,18 +452,15 @@ function limpiarFiltros(){
   filtrarTabla();
 }
 
-/* VISUALIZACION DE CONTRATO segun estado */
 function verContratoDesdeFila(fila){
   const estado = fila.querySelector('[data-estado]') ? (fila.querySelector('[data-estado]').getAttribute('data-estado')||'') : '';
   if (estado === 'EMITIDO' || estado === 'COMODATO') {
     document.getElementById('iframePDF').src = urlContratoFirmado;
     document.getElementById('modalPDF').classList.add('active');
   } else if (estado === 'SOLICITADO' || estado === 'PENDIENTE' || estado === '') {
-    // no contrato firmado -> abrir prevalidación/tutor view
     document.getElementById('iframeTutor').src = urlPrevalidacion;
     document.getElementById('modalTutor').classList.add('active');
   } else if (estado === 'ANULADO') {
-    // show history instead for anulados
     const src = urlHistorialAT;
     document.getElementById('iframeHistorial').src = src;
     document.getElementById('modalHistorial').classList.add('active');
@@ -484,26 +470,22 @@ function verContratoDesdeFila(fila){
   }
 }
 
-/* --- NUEVO: Ver Indicación --- 
-   rellena y abre modalIndicacion a partir de una fila <tr>
-*/
 function verIndicacionDesdeFila(fila){
   if (!fila) return;
-  // Leer campos desde las celdas (ajusta índices si la tabla cambia)
   const correl = fila.cells[0] ? fila.cells[0].textContent.trim() : '';
-  const paciente = fila.cells[1] ? fila.cells[1].textContent.trim() : '';
-  const tipoAyuda = fila.cells[2] ? fila.cells[2].textContent.trim() : '';
-  const fin = fila.cells[3] ? fila.cells[3].textContent.trim() : '';
-  const fecha = fila.cells[4] ? fila.cells[4].textContent.trim() : '';
-  const medico = fila.cells[5] ? fila.cells[5].textContent.trim() : '';
-  const evaluador = fila.cells[6] ? fila.cells[6].textContent.trim() : '';
-  const instituto = fila.cells[7] ? fila.cells[7].textContent.trim() : '';
+  const instituto = fila.cells[1] ? fila.cells[1].textContent.trim() : '';
+  const medico = fila.cells[2] ? fila.cells[2].textContent.trim() : '';
+  const evaluador = fila.cells[3] ? fila.cells[3].textContent.trim() : '';
+  const paciente = fila.cells[4] ? fila.cells[4].textContent.trim() : '';
+  const tipoAyuda = fila.cells[5] ? fila.cells[5].textContent.trim() : '';
+  const fin = fila.cells[6] ? fila.cells[6].textContent.trim() : '';
+  const fecha = fila.cells[7] ? fila.cells[7].textContent.trim() : '';
   const estadoIndic = fila.cells[8] ? fila.cells[8].textContent.trim() : '';
   const estadoContrato = fila.querySelector('[data-estado]') ? (fila.querySelector('[data-estado]').getAttribute('data-estado')||'') : '';
 
-  // Montar el HTML de la indicación — he mantenido el formato 
   const html = `
     <h1 style="color:#E30613; text-align:center; margin:0 0 10px 0;">Indicación Ayuda Técnica</h1>
+    <div style="text-align:center; font-size:13px; margin-bottom:6px;">Resumen de indicación generada en el sistema Teletón</div>
 
     <div class='section-title'>Datos del Paciente</div>
     <div class='section'>
@@ -539,7 +521,6 @@ function verIndicacionDesdeFila(fila){
   document.getElementById('modalIndicacion').classList.add('active');
 }
 
-/* Cerrar modales PDF/Tutor/Indicacion al hacer click fuera del card */
 document.addEventListener('click', function(e){
   const mi = document.getElementById('modalIndicacion');
   if (mi && mi.classList.contains('active')) {
@@ -557,18 +538,16 @@ document.getElementById('btnCerrarIndicacion')?.addEventListener('click', ()=> d
 document.getElementById('btnImprimirIndicacion')?.addEventListener('click', ()=>{
   const contenido = document.getElementById('contenidoIndicacion').innerHTML;
   const w = window.open('', '_blank');
-  w.document.write('<html><head><title>Imprimir Indicación</title><link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet"></head><body style="font-family:Nunito Sans, Arial; padding:20px;">' + contenido + '</body></html>');
+  w.document.write('<html><head><title>Imprimir Indicación</title><link href="https://fonts.googleapis.com/css2?family=Nunito Sans:wght@400;600;700&display=swap" rel="stylesheet"></head><body style="font-family:Nunito Sans, Arial; padding:20px;">' + contenido + '</body></html>');
   w.document.close();
   w.focus();
   setTimeout(()=>{ w.print(); }, 300);
 });
 
-/* SELECCIÓN DE FILAS Y TOOLBAR DINÁMICO */
 let filaSeleccionada = null;
 
 function activarSeleccionFilas(){
   document.querySelectorAll('#tablaContratosBody tr').forEach(fila=>{
-    // click en fila (excepto cuando se hace click en botones)
     fila.addEventListener('click', (e)=>{
       if (e.target && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) return;
       if (filaSeleccionada) filaSeleccionada.classList.remove('seleccionada');
@@ -576,14 +555,12 @@ function activarSeleccionFilas(){
       fila.classList.add('seleccionada');
       actualizarToolbar();
     });
-    // doble click abre ver contrato
     fila.addEventListener('dblclick', ()=>{
       verContratoDesdeFila(fila);
     });
   });
 }
 
-/* habilitar/deshabilitar botones segun data-estado */
 function setBtn(id,enabled){
   const b = document.getElementById(id);
   if (!b) return;
@@ -602,21 +579,16 @@ function obtenerDatosFila(){
 
 function actualizarToolbar(){
   const datos = obtenerDatosFila();
-  // desactivar todo por defecto (excepto agregar)
   const botones = ['btnSalud','btnDocumento','btnEditar','btnEliminar','btnCero','btnAccesibilidad','btnTiempo'];
   botones.forEach(id=>setBtn(id,false));
   if (!datos) return;
   const st = (datos.estadoContrato || '').toUpperCase();
-  // considerar SOLICITADO como "lista de espera/pendiente"
   if (st === 'PENDIENTE' || st === 'LISTA DE ESPERA' || st === 'SOLICITADO' || st === '') {
-    // lista de espera: Agendar, Editar, Anular, Ver Indicación, Historial
     setBtn('btnSalud', true);
     setBtn('btnEditar', true);
     setBtn('btnEliminar', true);
     setBtn('btnCero', true);
     setBtn('btnTiempo', true);
-    setBtn('btnDocumento', false); // documento solo si hay contrato emitido/comodato
-    setBtn('btnAccesibilidad', false);
   } else if (st === 'EMITIDO' || st === 'COMODATO') {
     setBtn('btnDocumento', true);
     setBtn('btnCero', true);
@@ -624,13 +596,74 @@ function actualizarToolbar(){
   } else if (st === 'ANULADO') {
     setBtn('btnTiempo', true);
   } else {
-    // default fallback
     setBtn('btnCero', true);
     setBtn('btnTiempo', true);
   }
 }
 
-/* ANULAR: modal y cambio de estado (no eliminar) */
+function aplicarEstadoArticulo(){
+  document.querySelectorAll('#tablaContratosBody tr').forEach(fila=>{
+    const tipoAyuda = fila.cells[5] ? fila.cells[5].textContent.trim().toLowerCase() : '';
+    const estadoArticuloTd = fila.querySelector('.estado-articulo');
+    const btnNotif = fila.querySelector('.btn-notificacion');
+    if (!estadoArticuloTd || !btnNotif) return;
+    const hayStock = stockArticulos[tipoAyuda] ?? null;
+    if (hayStock === null) {
+      estadoArticuloTd.textContent = 'Sin info stock';
+      estadoArticuloTd.className = 'estado-articulo';
+      btnNotif.classList.remove('notif-verde','notif-rojo');
+    } else if (hayStock) {
+      estadoArticuloTd.textContent = 'Stock OK';
+      estadoArticuloTd.className = 'estado-articulo stock-alto';
+      btnNotif.classList.add('notif-verde');
+      btnNotif.classList.remove('notif-rojo');
+    } else {
+      estadoArticuloTd.textContent = 'Bajo stock';
+      estadoArticuloTd.className = 'estado-articulo stock-bajo';
+      btnNotif.classList.add('notif-rojo');
+      btnNotif.classList.remove('notif-verde');
+    }
+    btnNotif.onclick = ()=>{
+      const msg = `Notificación enviada a bodega por artículo: ${tipoAyuda || '(desconocido)'} - correlativo ${fila.cells[0].textContent.trim()}`;
+      alert(msg);
+    };
+  });
+}
+
+/* NUEVO: mapeo Estado Fin700 visual */
+function actualizarEstadoFin700(){
+  document.querySelectorAll('#tablaContratosBody tr').forEach(fila=>{
+    const tdEstadoContrato = fila.querySelector('[data-estado]');
+    const tdFin = fila.cells[10];
+    if (!tdEstadoContrato || !tdFin) return;
+
+    const estadoContrato = (tdEstadoContrato.getAttribute('data-estado') || '').toUpperCase();
+    const textoStock = fila.querySelector('.estado-articulo') ? fila.querySelector('.estado-articulo').textContent.toLowerCase() : '';
+    let texto = '';
+    let color = '';
+
+    if (estadoContrato === 'ANULADO') {
+      texto = '';
+      color = '';
+    } else if (estadoContrato === 'EMITIDO' || estadoContrato === 'COMODATO') {
+      if (textoStock.includes('bajo')) {
+        texto = 'SOLICITUD DE TRASPASO';
+        color = '#D71920';
+      } else {
+        texto = 'ENTREGADO';
+        color = '#6EB43F';
+      }
+    } else {
+      texto = 'SOLICITUD DE CONSUMO';
+      color = '#D71920';
+    }
+
+    tdFin.textContent = texto;
+    tdFin.style.fontWeight = '700';
+    tdFin.style.color = color || '#D71920';
+  });
+}
+
 let filaParaAnular = null;
 function abrirModalAnular(fila){
   filaParaAnular = fila;
@@ -647,22 +680,19 @@ document.getElementById('btnConfirmAnular').addEventListener('click', ()=>{
   if (!filaParaAnular) { alert('No hay fila seleccionada para anular'); return; }
   const motivo = document.getElementById('motivoAnulacion').value;
   const obs = document.getElementById('obsAnulacion').value;
-  // aplicar cambios visibles
   filaParaAnular.classList.add('anulada');
   const tdEstado = filaParaAnular.querySelector('[data-estado]');
   if (tdEstado) { tdEstado.setAttribute('data-estado','ANULADO'); tdEstado.textContent = 'ANULADO'; }
-  // opcional: guardar motivo/obs en atributos para auditoría (solo en DOM)
   filaParaAnular.dataset.anulacionMotivo = motivo;
   filaParaAnular.dataset.anulacionObs = obs;
   document.getElementById('modalAnular').classList.remove('active');
   filaSeleccionada = null;
   actualizarToolbar();
+  actualizarEstadoFin700();
 });
 
-/* AGENDAR: modal */
 function abrirModalAgendar(fila){
   if (!fila) return;
-  // precargar info si quieres
   document.getElementById('actividadAgendar').value = "Entrega ayuda técnica (15 min)";
   document.getElementById('prioridadAgendar').value = "Prioritario";
   document.getElementById('plazoAgendar').value = "1 Mes";
@@ -676,15 +706,13 @@ document.getElementById('btnGuardarAgendar').addEventListener('click', ()=>{
   document.getElementById('modalAgendar').classList.remove('active');
 });
 
-/* MODAL HISTORIAL: helpers */
 const modalHistorial = document.getElementById('modalHistorial');
 const iframeHistorial = document.getElementById('iframeHistorial');
 const btnCerrarModalHistorial = document.getElementById('btnCerrarModalHistorial');
+btnCerrarModalHistorial.addEventListener('click', ()=>{ modalHistorial.classList.remove('active'); iframeHistorial.src = ''; });
 
-/* inicialización de handlers globales */
 document.addEventListener('DOMContentLoaded', ()=>{
 
-  // Mapear estados (mantener compatibilidad con tu lógica previa)
   document.querySelectorAll('#tablaContratosBody tr').forEach(tr=>{
     const estadoIndicText = tr.cells[8] ? (tr.cells[8].textContent||'').trim().toLowerCase() : '';
     const tdEstado = tr.querySelector('[data-estado]');
@@ -693,7 +721,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if (estadoIndicText === 'indicado') {
       tdEstado.setAttribute('data-estado','');
       tdEstado.textContent = '';
-    } else if (estadoIndicText === 'lista de espera' || estadoIndicText === 'lista de espera') {
+    } else if (estadoIndicText === 'lista de espera') {
       tdEstado.setAttribute('data-estado','SOLICITADO');
       tdEstado.textContent = 'SOLICITADO';
     } else if (estadoIndicText === 'finalizada' || estadoIndicText === 'finalizado' ) {
@@ -707,15 +735,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 
-  // Aplicar estado de artículo (stock) y asignar handlers para botón notificación
   aplicarEstadoArticulo();
+  actualizarEstadoFin700();
 
-  // attach ver contrato buttons
   document.querySelectorAll('.ver-btn').forEach(btn=>{
-    // remove existing listeners to avoid duplicates (in case of hot reload)
     btn.replaceWith(btn.cloneNode(true));
   });
-  // reselect after cloning
   document.querySelectorAll('.ver-btn').forEach(btn=>{
     btn.addEventListener('click', function(e){
       const fila = this.closest('tr');
@@ -728,7 +753,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
   });
 
-  // attach ver indicacion buttons
   document.querySelectorAll('.btn-indicacion').forEach(btn=>{
     btn.replaceWith(btn.cloneNode(true));
   });
@@ -744,15 +768,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
   });
 
-  // attach notification buttons (they already have onclick from aplicarEstadoArticulo, but ensure idempotency)
-  document.querySelectorAll('.btn-notificacion').forEach(btn=>{
-    // no-op here; aplicarEstadoArticulo sets onclick and classes
-  });
-
-  // attach selection to rows
   activarSeleccionFilas();
 
-  // eventos toolbar
   document.getElementById('btnAgregar').addEventListener('click', ()=> alert('Abrir formulario agregar (demo)'));
 
   document.getElementById('btnSalud').addEventListener('click', ()=>{
@@ -776,17 +793,31 @@ document.addEventListener('DOMContentLoaded', ()=>{
     abrirModalAnular(filaSeleccionada);
   });
 
-  document.getElementById('btnCero').addEventListener('click', ()=>{
-    if (!filaSeleccionada) return alert('Selecciona una fila');
-    verIndicacionDesdeFila(filaSeleccionada);
-  });
+  // BOTÓN DEVOLUCIÓN AT (abre modal y luego registra devuelto al enviar formulario)
+  // BOTÓN DEVOLUCIÓN AT
+document.getElementById('btnCero').addEventListener('click', ()=>{
+  // si no hay filaSeleccionada, intenta usar la que tenga la clase .seleccionada
+  if (!filaSeleccionada) {
+    const trSel = document.querySelector('#tablaContratosBody tr.seleccionada');
+    if (trSel) filaSeleccionada = trSel;
+  }
+  if (!filaSeleccionada) {
+    alert('Selecciona una fila para registrar devolución');
+    return;
+  }
+  const tipoAyuda = filaSeleccionada.cells[5] ? filaSeleccionada.cells[5].textContent.trim() : '';
+  document.getElementById('inputArticulo').value = tipoAyuda;
+  document.getElementById('inputCantidad').value = 1;
+  document.getElementById('inputObservacion').value = '';
+  document.getElementById('modalDevolucion').style.display = 'flex';
+});
+
 
   document.getElementById('btnAccesibilidad').addEventListener('click', ()=>{
     const d = obtenerDatosFila(); if (!d) return alert('Selecciona una fila');
     alert('Opciones accesibilidad (demo) para: ' + d.correl);
   });
 
-  /* ---- REEMPLAZO: acción del botón HISTORIAL (btnTiempo) ---- */
   document.getElementById('btnTiempo').addEventListener('click', ()=>{
     const d = obtenerDatosFila(); if (!d) return alert('Selecciona una fila');
     const src = urlHistorialAT;
@@ -794,165 +825,35 @@ document.addEventListener('DOMContentLoaded', ()=>{
     modalHistorial.classList.add('active');
   });
 
-  // cerrar modal historial con botón
-  btnCerrarModalHistorial.addEventListener('click', ()=>{
-    modalHistorial.classList.remove('active');
-    iframeHistorial.src = '';
+  document.getElementById('btnExcel').addEventListener('click', ()=>{
+    const tabla = document.getElementById('tablaContratos');
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.table_to_sheet(tabla);
+    XLSX.utils.book_append_sheet(wb, ws, "Contratos");
+    XLSX.writeFile(wb, "contratos_ayudas_tecnicas.xlsx");
   });
 
-  // cerrar modal historial clic fuera de card
-  modalHistorial.addEventListener('click', (e)=>{
-    if (e.target === modalHistorial) {
-      modalHistorial.classList.remove('active');
-      iframeHistorial.src = '';
-    }
-  });
-
-  // filtros
   document.getElementById('btnLimpiar').addEventListener('click', limpiarFiltros);
   ['filtroInstituto','especialidad','profesional','tipoAyuda','fechaDesde','fechaHasta','filterEstado']
     .forEach(id => document.getElementById(id).addEventListener('change', filtrarTabla));
 
-  // activar estado inicial de toolbar
-  actualizarToolbar();
-
-  // EXPORTAR A EXCEL — SOLO FILAS VISIBLES
-  document.getElementById('btnExcel').addEventListener('click', ()=>{
-      const tabla = document.getElementById('tablaContratos');
-      const filasVisibles = [];
-      const headers = [];
-      tabla.querySelectorAll("thead th").forEach(th => headers.push(th.textContent.trim()));
-      filasVisibles.push(headers);
-      tabla.querySelectorAll("tbody tr").forEach(tr =>{
-        if(tr.style.display != "none"){
-          const fila = [];
-          tr.querySelectorAll("td").forEach(td => fila.push(td.innerText.trim()));
-          filasVisibles.push(fila);
-        }
-      });
-      if(filasVisibles.length <= 1){
-        alert("No hay datos visibles para exportar.");
-        return;
-      }
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(filasVisibles);
-      XLSX.utils.book_append_sheet(wb, ws, "Listado");
-      XLSX.writeFile(wb, "Contratos_Exportados.xlsx");
+  document.getElementById('formDevolucion').addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!filaSeleccionada) {
+      alert('No hay fila seleccionada para asociar la devolución.');
+      return;
+    }
+    filaSeleccionada.classList.add('devuelto');
+    alert('Devolución registrada (demo).');
+    document.getElementById('modalDevolucion').style.display = 'none';
+    actualizarEstadoFin700();
+  });
+  document.getElementById('btnCerrarModalDevolucion').addEventListener('click', function(){
+    document.getElementById('modalDevolucion').style.display = 'none';
   });
 
-}); // DOMContentLoaded end
-
-// --- DEVOLUCION: override btnCero para abrir modal y precargar datos, cerrar modal, submit y marcar fila --- 
-document.getElementById('btnCero').onclick = function() {
-  if (!filaSeleccionada) {
-    alert('Selecciona una fila primero');
-    return;
-  }
-  const articulo = filaSeleccionada.cells[2]?.textContent.trim() || '';
-  const correl = filaSeleccionada.cells[0]?.textContent.trim() || '';
-  const paciente = filaSeleccionada.cells[1]?.textContent.trim() || '';
-
-  document.getElementById('inputArticulo').value = articulo;
-  document.getElementById('inputCantidad').value = 1;
-  document.getElementById('inputObservacion').value = `Devolución correlativo: ${correl} - ${paciente}`;
-
-  document.getElementById('modalDevolucion').classList.add('active');
-  document.getElementById('modalDevolucion').style.display = 'flex';
-};
-
-// cerrar modal devolucion por botón
-document.getElementById('btnCerrarModalDevolucion').addEventListener('click', function() {
-  document.getElementById('modalDevolucion').classList.remove('active');
-  document.getElementById('modalDevolucion').style.display = 'none';
+  filtrarTabla();
 });
-
-// submit del formulario de devolucion
-document.getElementById('formDevolucion').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const articulo = document.getElementById('inputArticulo').value;
-  const cantidad = document.getElementById('inputCantidad').value;
-  const observacion = document.getElementById('inputObservacion').value;
-
-  alert(`Devolución registrada:\nArtículo: ${articulo}\nCantidad: ${cantidad}\nObservaciones: ${observacion}`);
-
-  marcarDevolucionEnFila();
-
-  this.reset();
-  document.getElementById('modalDevolucion').classList.remove('active');
-  document.getElementById('modalDevolucion').style.display = 'none';
-});
-
-// --- MARCAR FILA COMO DEVUELTA ---
-function marcarDevolucionEnFila() {
-  if (!filaSeleccionada) return;
-  const tdEstado = filaSeleccionada.querySelector('[data-estado]');
-  if (tdEstado){
-      tdEstado.setAttribute('data-estado','DEVUELTO');
-      tdEstado.textContent = 'DEVUELTO';
-  }
-  filaSeleccionada.classList.add('devuelto');
-  filaSeleccionada.style.background = '#e8ffea';
-}
-
-/* ========================
-   Funciones stock / notificaciones
-   ======================== */
-
-function aplicarEstadoArticulo(){
-  document.querySelectorAll("#tablaContratosBody tr").forEach(tr => {
-    const estadoContrato = (tr.querySelector("[data-estado]")?.getAttribute("data-estado") || "").toString().toUpperCase();
-    const tdEstadoFin = tr.querySelector(".estado-articulo");
-    const btnNotif = tr.querySelector(".btn-notificacion");
-
-    let estadoFin = "";
-    let color = "";
-    let mensaje = "";
-
-    if (estadoContrato === "EMITIDO" || estadoContrato === "COMODATO") {
-      estadoFin = "ENTREGADO";
-      color = "#6EB43F";
-      mensaje = "✔ Contrato emitido / artículo entregado (hay stock).";
-    } else if (estadoContrato === "SOLICITADO") {
-      estadoFin = "SOLICITUD DE TRASPASO";
-      color = "#D71920";
-      mensaje = "⚠ Solicitud: revisar disponibilidad o traspaso.";
-    } else if (estadoContrato === "LISTA DE ESPERA" || estadoContrato === "PENDIENTE" || estadoContrato === "") {
-      estadoFin = "SOLICITUD DE CONSUMO";
-      color = "#D71920";
-      mensaje = "❌ Sin stock. Pasó a solicitud de consumo/lista de espera.";
-	  
-    } else if (estadoContrato === "ANULADO") {
-      estadoFin = "ANULADO";
-      color = "#666666";
-      mensaje = "La indicación fue anulada.";
-    } else if (estadoContrato === "DEVUELTO") {
-      estadoFin = "DEVUELTO";
-      color = "#6EB43F";
-      mensaje = "✔ Artículo devuelto y disponible en stock.";
-    } else {
-      estadoFin = "SIN DEFINIR";
-      color = "#D71920";
-      mensaje = "Estado no reconocido.";
-    }
-
-    if (tdEstadoFin) {
-      tdEstadoFin.innerHTML = `<span style="color:${color}; font-weight:700">${estadoFin}</span>`;
-    }
-
-    if (btnNotif) {
-      btnNotif.onclick = (e) => { e.stopPropagation(); alert(mensaje); };
-      if (color === "#6EB43F") {
-        btnNotif.classList.add("notif-verde");
-        btnNotif.classList.remove("notif-rojo");
-      } else {
-        btnNotif.classList.add("notif-rojo");
-        btnNotif.classList.remove("notif-verde");
-      }
-    }
-  });
-}
-
-
 </script>
 </body>
 </html>
