@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Mantenedor de Contratos - Teletón (Final) - v2</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 <style>
   :root{
     --rojo-teleton:#D71920;
@@ -29,18 +30,24 @@
   .btn-toolbar{background:var(--rojo-teleton); color:#fff; border:none; border-radius:8px; width:42px; height:42px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px}
   .btn-toolbar[disabled]{background:#E9E9E9; color:#bbb; cursor:not-allowed; opacity:0.5}
   .btn-toolbar:hover:not([disabled]){background:#b21214}
-  table{width:100%; border-collapse:collapse}
+  table{width:100%; border-collapse:collapse; table-layout:auto}
   thead th{background:var(--rojo-teleton); color:#fff; padding:10px; font-weight:700; text-align:left}
   tbody td{padding:10px; border-bottom:1px solid var(--gris-claro); vertical-align:middle}
   tbody tr:hover{background:#fafafa}
-  .acciones button{background:var(--azul-teleton); color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:600}
-  .acciones button:hover{background:var(--verde-teleton)}
-  .acciones .btn-indicacion{background:transparent;color:var(--rojo-teleton);border:1px solid var(--rojo-teleton);padding:6px 10px;margin-left:6px;border-radius:6px;font-weight:600}
+  /* acciones: mejor espacio, wrap y alineado */
+  .acciones{display:flex; gap:8px; align-items:center; flex-wrap:wrap; min-width:220px}
+  .acciones .ver-btn, .acciones .btn-indicacion, .acciones .btn-notificacion{background:var(--azul-teleton); color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:600}
+  .acciones .ver-btn:hover, .acciones .btn-indicacion:hover{background:var(--verde-teleton)}
+  .acciones .btn-indicacion{background:transparent;color:var(--rojo-teleton);border:1px solid var(--rojo-teleton);padding:6px 10px;border-radius:6px;font-weight:600}
   .acciones .btn-indicacion:hover{background:var(--rojo-teleton);color:#fff}
+  .acciones .btn-notificacion{width:36px; height:36px; padding:0; border-radius:50%; display:inline-flex; align-items:center; justify-content:center}
+  .notif-verde{background:#6EB43F !important; color:#fff !important}
+  .notif-rojo{background:#D71920 !important; color:#fff !important}
   tr.seleccionada{background:#fff0f0 !important; outline:2px solid var(--rojo-teleton)}
   tr.anulada{background:#efefef !important; color:#666}
   .table-area{height:65vh; overflow:auto}
   .footer{padding:12px 18px; text-align:right; background:#fafafa; border-top:2px solid var(--rojo-teleton); font-weight:600; color:var(--azul-teleton)}
+
   /* modals */
   .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); z-index:200}
   .modal.active{display:flex}
@@ -53,7 +60,7 @@
   .form-row{margin-bottom:12px}
   .form-row label{margin-bottom:6px}
   textarea{width:100%; min-height:80px; padding:8px; border:1px solid #ccc; border-radius:6px}
-  @media (max-width:720px){ .filtros{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} }
+  @media (max-width:720px){ .filtros{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .acciones{min-width:160px} }
 
   /* estilos específicos del modal indicación (mantener separados para no interferir) */
   .indicacion .section-title{background:#E30613;color:#fff;padding:6px;font-weight:bold;margin-top:16px;border-radius:4px}
@@ -63,462 +70,351 @@
   .indicacion .label{font-weight:bold;color:#005288}
   .modal-close-icon{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
 
-  /* modal historial específico (puede heredar .modal .modal-card) */
   #modalHistorial .modal-card{max-width:1100px}
   #iframeHistorial{width:100%; height:100%; border:none}
 
-  /* estilo fila devuelta */
   tr.devuelto td { color: #1a6f2b; font-weight:700; }
 </style>
 </head>
 <body>
-  <div class="topbar">
-    <img src="image.jpg" alt="Teletón"/>
-    <div style="font-weight:700; font-size:20px">Teletón</div>
-    <div style="flex:1"></div>
-    <div style="text-align:right">
-      <div style="font-weight:700">Cesar Jimenez</div>
-      <div style="font-size:12px; color:#666">IT 131 - SANTIAGO</div>
-    </div>
-  </div>
-
-  <header>Administrador Ayudas Técnicas</header>
-
-  <div class="container">
-    <!-- sticky filtros + toolbar -->
-    <div class="filtros-wrapper">
-      <div class="filtros">
-        <div>
-          <label>Instituto</label>
-          <select id="filtroInstituto">
-            <option value="">Todos</option>
-            <option value="metropolitana">Metropolitana</option>
-            <option value="valparaiso">Valparaíso</option>
-            <option value="arica">Arica</option>
-            <option value="coquimbo">Coquimbo</option>
-          </select>
-        </div>
-        <div>
-          <label>Especialidad</label>
-          <select id="especialidad">
-            <option value="">Todas</option>
-            <option>Kinesiología</option>
-            <option>Terapia Ocupacional</option>
-          </select>
-        </div>
-        <div>
-          <label>Profesional</label>
-          <select id="profesional">
-            <option value="">Todos</option>
-            <option>Tapia Soto Claudia</option>
-            <option>García Pasten Verónica</option>
-            <option>Morales Vilca Karen</option>
-          </select>
-        </div>
-        <div>
-          <label>Tipo ayuda técnica</label>
-          <select id="tipoAyuda">
-            <option value="">Todos</option>
-            <option>Silla de ruedas</option>
-            <option>Mesa cajón</option>
-            <option>Andador</option>
-          </select>
-        </div>
-        <div>
-          <label>Fecha desde</label>
-          <input id="fechaDesde" type="date"/>
-        </div>
-        <div>
-          <label>Fecha hasta</label>
-          <input id="fechaHasta" type="date"/>
-        </div>
-        <div>
-          <label>Estado contrato</label>
-          <select id="filterEstado">
-            <option value="">Todos</option>
-            <option value="EMITIDO">Emitido</option>
-            <option value="PENDIENTE">Lista de Espera (legacy)</option>
-            <option value="SOLICITADO">Solicitado</option>
-            <option value="COMODATO">Comodato</option>
-            <option value="ANULADO">Anulado</option>
-          </select>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px">
-          <button id="btnLimpiar" class="btn-limpiar">Limpiar filtros</button>
-        </div>
-      </div>
-
-      <div class="toolbar-row">
-        <button id="btnAgregar" class="btn-toolbar" title="Notificaciones"><i class="fa-solid fa-bell"></i></button>
-        <button id="btnSalud" class="btn-toolbar" title="Agendar" disabled><i class="fa-solid fa-kit-medical"></i></button>
-        <button id="btnDocumento" class="btn-toolbar" title="Firma Documento" disabled><i class="fa-solid fa-file-pen"></i></button>
-        <button id="btnEditar" class="btn-toolbar" title="Contactar" disabled><i class="fa-solid fa-phone"></i></button>
-        <button id="btnEliminar" class="btn-toolbar" title="Anular" disabled><i class="fa-solid fa-xmark"></i></button>
-        <button id="btnCero" class="btn-toolbar" title="Devolución AT" disabled><i class="fa-solid fa-warehouse"></i></button>
-        <button id="btnAccesibilidad" class="btn-toolbar" title="Ciclopit" disabled><i class="fa-solid fa-wheelchair"></i></button>
-        <button id="btnTiempo" class="btn-toolbar" title="Historial" disabled><i class="fa-solid fa-clock"></i></button>
-        <button id="btnExcel" class="btn-toolbar" title="Exportar a Excel"><i class="fa-solid fa-file-excel"></i></button>
-      </div>
-    </div>
-
-    <!-- table area -->
-    <div class="table-area" id="tableArea">
-      <table id="tablaContratos" aria-label="Tabla de contratos">
-        <thead>
-          <tr>
-            <th>Correlativo</th>
-            <th>Paciente</th>
-            <th>Tipo ayuda técnica</th>
-            <th>Correlativo FIN700</th>
-            <th>Fecha indicación</th>
-            <th>Médico</th>
-            <th>Evaluador</th>
-            <th>Instituto</th>
-            <th>Estado indicación</th>
-            <th>Estado contrato</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaContratosBody">
-          <!-- ejemplos actualizados para mostrar nuevos mapeos de estados -->
-          <tr data-instituto="Metropolitana">
-            <td>69558</td>
-            <td>94791 - CAEL FERNANDO TARQUI MARQUEZ</td>
-            <td>Silla de ruedas estándar</td>
-            <td>FIN700</td>
-            <td>26/06/2025</td>
-            <td>Tapia Soto Claudia</td>
-            <td>Morales Vilca Karen</td>
-            <td>Metropolitana</td>
-            <td>Indicado</td>
-            <td data-estado=""></td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Arica">
-            <td>67966</td>
-            <td>130103 - BENJAMIN ISAAC LORENZO CRUZ SALINAS</td>
-            <td>Mesa cajón chica</td>
-            <td>FIN701</td>
-            <td>29/10/2025</td>
-            <td>García Pasten Verónica</td>
-            <td>Morales Vilca Karen</td>
-            <td>Arica</td>
-            <td>Evaluado</td>
-            <td data-estado="SOLICITADO">SOLICITADO</td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Coquimbo">
-            <td>70021</td>
-            <td>120220 - MATÍAS JAVIER ROJAS LARA</td>
-            <td>Andador</td>
-            <td>FIN702</td>
-            <td>02/11/2025</td>
-            <td>Tapia Soto Claudia</td>
-            <td>Morales Vilca Karen</td>
-            <td>Coquimbo</td>
-            <td>Indicado</td>
-            <td data-estado=""></td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Valparaíso">
-            <td>71001</td>
-            <td>101020 - VICENTE FIGUEROA PUEBLA</td>
-            <td>Silla neurológica</td>
-            <td>FIN703</td>
-            <td>12/11/2025</td>
-            <td>Tapia Soto Claudia</td>
-            <td>Morales Vilca Karen</td>
-            <td>Valparaíso</td>
-            <td>Finalizada</td>
-            <td data-estado="EMITIDO">EMITIDO</td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Metropolitana">
-            <td>71040</td>
-            <td>121212 - Camila Bastias Rios</td>
-            <td>Silla neurológica</td>
-            <td>FIN704</td>
-            <td>12/11/2025</td>
-            <td>Tapia Soto Claudia</td>
-            <td>Morales Vilca Karen</td>
-            <td>Metropolitana</td>
-            <td>Lista de Espera</td>
-            <td data-estado="SOLICITADO">SOLICITADO</td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Valparaíso">
-            <td>71100</td>
-            <td>150001 - ROSA MARINA PÉREZ</td>
-            <td>Andador</td>
-            <td>FIN705</td>
-            <td>15/11/2025</td>
-            <td>García Pasten Verónica</td>
-            <td>Tapia Soto Claudia</td>
-            <td>Valparaíso</td>
-            <td>Indicado</td>
-            <td data-estado=""></td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Coquimbo">
-            <td>71111</td>
-            <td>150002 - JUAN PEREZ</td>
-            <td>Silla de ruedas</td>
-            <td>FIN706</td>
-            <td>20/11/2025</td>
-            <td>Tapia Soto Claudia</td>
-            <td>Morales Vilca Karen</td>
-            <td>Coquimbo</td>
-            <td>Evaluado</td>
-            <td data-estado="EMITIDO">EMITIDO</td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Metropolitana">
-            <td>71122</td>
-            <td>150003 - ANA GÓMEZ</td>
-            <td>Mesa cajón</td>
-            <td>FIN707</td>
-            <td>22/11/2025</td>
-            <td>Tapia Soto Claudia</td>
-            <td>Morales Vilca Karen</td>
-            <td>Metropolitana</td>
-            <td>Lista de Espera</td>
-            <td data-estado="SOLICITADO">SOLICITADO</td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Arica">
-            <td>71133</td>
-            <td>150004 - LUIS TORRES</td>
-            <td>Silla neurológica</td>
-            <td>FIN708</td>
-            <td>25/11/2025</td>
-            <td>García Pasten Verónica</td>
-            <td>Morales Vilca Karen</td>
-            <td>Arica</td>
-            <td>Indicado</td>
-            <td data-estado=""></td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-          <tr data-instituto="Valparaíso">
-            <td>71144</td>
-            <td>150005 - MARÍA LÓPEZ</td>
-            <td>Andador</td>
-            <td>FIN709</td>
-            <td>27/11/2025</td>
-            <td>Tapia Soto Claudia</td>
-            <td>Morales Vilca Karen</td>
-            <td>Valparaíso</td>
-            <td>Indicado</td>
-            <td data-estado="ANULADO">ANULADO</td>
-            <td class="acciones">
-              <button type="button" class="ver-btn">Ver contrato</button>
-            </td>
-          </tr>
-
-        </tbody>
-      </table>
-    </div>
-
-    <div class="footer">Total de indicaciones: 11</div>
-  </div>
-
-  <!-- MODAL: Ver Contrato (PDF) -->
-  <div id="modalPDF" class="modal" aria-hidden="true">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>Contrato / Visualización</div>
-        <button id="btnCerrarModalPDF" title="Cerrar" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">×</button>
-      </div>
-      <div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
-        <iframe id="iframePDF" style="width:100%; height:100%; border:none"></iframe>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: Devolución -->
-  <div id="modalDevolucion" class="modal" aria-hidden="true" style="display:none; align-items:center; justify-content:center; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000;">
-    <div class="modal-card" style="max-width:420px; background:#fff; border-radius:8px; padding:24px;">
-      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
-        <div>Devolución de Ayuda Técnica</div>
-        <button id="btnCerrarModalDevolucion" title="Cerrar" style="background:none;border:none;color:#d71920;font-size:20px;cursor:pointer">×</button>
-      </div>
-      <div class="modal-body">
-        <form id="formDevolucion">
-          <div class="form-row">
-            <label for="inputArticulo">Artículo:</label>
-            <input type="text" id="inputArticulo" class="form-control" required />
-          </div>
-          <div class="form-row">
-            <label for="inputCantidad">Cantidad:</label>
-            <input type="number" id="inputCantidad" class="form-control" min="1" value="1" required />
-          </div>
-          <div class="form-row">
-            <label for="inputObservacion">Observaciones:</label>
-            <textarea id="inputObservacion" class="form-control" rows="2"></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary" style="background:#d71920;border:none;">Registrar devolución</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: Prevalidacion (tutor) -->
-  <div id="modalTutor" class="modal" aria-hidden="true">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>Prevalidación / Tutor legal</div>
-        <button id="btnCerrarModalTutor" title="Cerrar" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">×</button>
-      </div>
-      <div class="modal-body">
-        <iframe id="iframeTutor" style="width:100%; height:60vh; border:none"></iframe>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: Indicación (nuevo, con contenido formateado) -->
-  <div id="modalIndicacion" class="modal" aria-hidden="true">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>Indicación / Detalle</div>
-        <button id="btnCerrarModalIndicacion" class="modal-close-icon" title="Cerrar">×</button>
-      </div>
-      <div class="modal-body">
-        <!-- Este contenedor se rellena dinámicamente -->
-        <div id="contenidoIndicacion" class="indicacion"></div>
-      </div>
-      <div class="modal-footer">
-        <button id="btnImprimirIndicacion" class="btn-secondary">Imprimir</button>
-        <button id="btnCerrarIndicacion" class="btn-primary">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: Anular (CONFIRM) -->
-  <div id="modalAnular" class="modal" aria-hidden="true">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>Confirmar anulación</div>
-        <button id="btnCerrarModalAnular" title="Cerrar" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">×</button>
-      </div>
-      <div class="modal-body">
-        <p id="anularResumen" style="background:#f6f6f6;padding:10px;border-radius:6px;font-size:14px;color:#333"></p>
-
-        <div class="form-row">
-          <label for="motivoAnulacion">Motivos de eliminación</label>
-          <select id="motivoAnulacion">
-            <option>Inidcación mal ingresada</option>
-            <option>No necesita ayuda técnica</option>
-            <option>Se rechaza ayuda  técnica</option>
-            <option>Paciente pasivo</option>
-            <option>Existe otra indicación de comodato sin entregar</option>
-	    <option>Eliminado lista de espera por 3 fallas</option>
-	    <option>Eliminado lista de espera por 2 ausencias</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label for="obsAnulacion">Observación (Obligatorio)</label>
-          <textarea id="obsAnulacion" placeholder="Agrega una observación que complemente el motivo..."></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button id="btnCerrarAnular" class="btn-secondary">Cerrar</button>
-        <button id="btnConfirmAnular" class="btn-primary">Anular</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: Agendar -->
-  <div id="modalAgendar" class="modal" aria-hidden="true">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>Agregar actividad / Agendar</div>
-        <button id="btnCerrarModalAgendar" title="Cerrar" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-row">
-          <label>Actividad</label>
-          <select id="actividadAgendar">
-            <option>Entrega ayuda técnica (15 min)</option>
-            <option>Entrega ayuda técnica (30 min)</option>
-            <option>Evaluación ayuda técnica (30 min)</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Prioridad</label>
-          <select id="prioridadAgendar">
-            <option>Prioritario</option>
-            <option>Normal</option>
-            <option>Bajo</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Plazo</label>
-          <select id="plazoAgendar">
-            <option>1 Mes</option>
-            <option>2 Meses</option>
-            <option>3 Meses</option>
-            <option>Fecha</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Observación</label>
-          <textarea id="obsAgendar" placeholder="Observación para la actividad"></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button id="btnCancelarAgendar" class="btn-secondary">Cerrar</button>
-        <button id="btnGuardarAgendar" class="btn-primary">Guardar Agendar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: HISTORIAL -->
-  <div id="modalHistorial" class="modal" aria-hidden="true">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>Historial de Entrega / Ayudas Técnicas</div>
-        <button id="btnCerrarModalHistorial" title="Cerrar" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">×</button>
-      </div>
-
-      <div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
-        <iframe id="iframeHistorial" src="" style="width:100%; height:100%; border:none"></iframe>
-      </div>
-    </div>
-  </div>
-
+<div class="topbar">
+<img alt="Teletón" src="image.jpg"/>
+<div style="font-weight:700; font-size:20px">Teletón</div>
+<div style="flex:1"></div>
+<div style="text-align:right">
+<div style="font-weight:700">Cesar Jimenez</div>
+<div style="font-size:12px; color:#666">IT 131 - SANTIAGO</div>
+</div>
+</div>
+<header>Administrador Ayudas Técnicas</header>
+<div class="panel-body">
+<div class="panel panel-default">
+<div class="panel-heading">
+<!-- sticky filtros + toolbar -->
+<div class="filtros-wrapper">
+<div class="filtros">
+<div>
+<label>Instituto</label>
+<select id="filtroInstituto">
+<option value="">Todos</option>
+<option value="metropolitana">Metropolitana</option>
+<option value="valparaiso">Valparaíso</option>
+<option value="arica">Arica</option>
+<option value="coquimbo">Coquimbo</option>
+</select>
+</div>
+<div>
+<label>Especialidad</label>
+<select id="especialidad">
+<option value="">Todas</option>
+<option>Kinesiología</option>
+<option>Terapia Ocupacional</option>
+</select>
+</div>
+<div>
+<label>Profesional</label>
+<select id="profesional">
+<option value="">Todos</option>
+<option>Tapia Soto Claudia</option>
+<option>García Pasten Verónica</option>
+<option>Morales Vilca Karen</option>
+</select>
+</div>
+<div>
+<label>Tipo ayuda técnica</label>
+<select id="tipoAyuda">
+<option value="">Todos</option>
+<option>Silla de ruedas</option>
+<option>Mesa cajón</option>
+<option>Andador</option>
+</select>
+</div>
+<div>
+<label>Fecha desde</label>
+<input id="fechaDesde" type="date"/>
+</div>
+<div>
+<label>Fecha hasta</label>
+<input id="fechaHasta" type="date"/>
+</div>
+<div>
+<label>Estado contrato</label>
+<select id="filterEstado">
+<option value="">Todos</option>
+<option value="EMITIDO">Emitido</option>
+<option value="PENDIENTE">Lista de Espera (legacy)</option>
+<option value="SOLICITADO">Solicitado</option>
+<option value="COMODATO">Comodato</option>
+<option value="ANULADO">Anulado</option>
+</select>
+</div>
+<div style="display:flex; align-items:center; gap:8px">
+<button class="btn-limpiar" id="btnLimpiar">Limpiar filtros</button>
+</div>
+</div>
+</div>
+</div>
+<div class="toolbar-row">
+<button class="btn-toolbar" id="btnAgregar" title="Notificaciones"><i class="fa-solid fa-bell"></i></button>
+<button class="btn-toolbar" disabled="" id="btnSalud" title="Agendar"><i class="fa-solid fa-kit-medical"></i></button>
+<button class="btn-toolbar" disabled="" id="btnDocumento" title="Firma Documento"><i class="fa-solid fa-file-pen"></i></button>
+<button class="btn-toolbar" disabled="" id="btnEditar" title="Contactar"><i class="fa-solid fa-phone"></i></button>
+<button class="btn-toolbar" disabled="" id="btnEliminar" title="Anular"><i class="fa-solid fa-xmark"></i></button>
+<button class="btn-toolbar" disabled="" id="btnCero" title="Devolución AT"><i class="fa-solid fa-warehouse"></i></button>
+<button class="btn-toolbar" disabled="" id="btnAccesibilidad" title="Ciclopit"><i class="fa-solid fa-wheelchair"></i></button>
+<button class="btn-toolbar" disabled="" id="btnTiempo" title="Historial"><i class="fa-solid fa-clock"></i></button>
+<button class="btn-toolbar" id="btnExcel" title="Exportar a Excel"><i class="fa-solid fa-file-excel"></i></button>
+</div>
+</div>
+<!-- table area -->
+<div class="table-area" id="tableArea">
+<table aria-label="Tabla de contratos" id="tablaContratos">
+<thead>
+<tr>
+<th>Id_Indicación</th>
+<th>Instituto</th>
+<th>Médico</th>
+<th>Evaluador</th>
+<th>Paciente</th>
+<th>Tipo ayuda técnica</th>
+<th>Correlativo FIN700</th>
+<th>Fecha indicación</th>
+<th>Estado indicación</th>
+<th>Estado contrato</th>
+<th>Estado Fin700</th>
+<th style="min-width:220px">Acciones</th>
+</tr>
+</thead>
+<tbody id="tablaContratosBody">
+<!-- ejemplos actualizados para mostrar nuevos mapeos de estados -->
+<tr data-instituto="Metropolitana"><td>69558</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>94791 - CAEL FERNANDO TARQUI MARQUEZ</td><td>Silla de ruedas estándar</td><td>FIN700</td><td>26/06/2025</td><td>Evaluado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Arica"><td>67966</td><td>Arica</td><td>García Pasten Verónica</td><td>Morales Vilca Karen</td><td>130103 - BENJAMIN ISAAC LORENZO CRUZ SALINAS</td><td>Mesa cajón chica</td><td>FIN701</td><td>29/10/2025</td><td>Evaluado</td><td data-estado="SOLICITADO">SOLICITADO</td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Coquimbo"><td>70021</td><td>Coquimbo</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>120220 - MATÍAS JAVIER ROJAS LARA</td><td>Andador</td><td>FIN702</td><td>02/11/2025</td><td>Indicado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Valparaíso"><td>71001</td><td>Valparaíso</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>101020 - VICENTE FIGUEROA PUEBLA</td><td>Silla neurológica</td><td>FIN703</td><td>12/11/2025</td><td>Finalizada</td><td data-estado="EMITIDO">EMITIDO</td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Metropolitana"><td>71040</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>121212 - Camila Bastias Rios</td><td>Silla neurológica</td><td>FIN704</td><td>12/11/2025</td><td>Lista de Espera</td><td data-estado="SOLICITADO">SOLICITADO</td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Valparaíso"><td>71100</td><td>Valparaíso</td><td>García Pasten Verónica</td><td>Tapia Soto Claudia</td><td>150001 - ROSA MARINA PÉREZ</td><td>Andador</td><td>FIN705</td><td>15/11/2025</td><td>Indicado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Coquimbo"><td>71111</td><td>Coquimbo</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>150002 - JUAN PEREZ</td><td>Silla de ruedas</td><td>FIN706</td><td>20/11/2025</td><td>Finalizada</td><td data-estado="EMITIDO">EMITIDO</td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Metropolitana"><td>71122</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>150003 - ANA GÓMEZ</td><td>Mesa cajón</td><td>FIN707</td><td>22/11/2025</td><td>Lista de Espera</td><td data-estado="SOLICITADO">SOLICITADO</td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Arica"><td>71133</td><td>Arica</td><td>García Pasten Verónica</td><td>Morales Vilca Karen</td><td>150004 - LUIS TORRES</td><td>Silla neurológica</td><td>FIN708</td><td>25/11/2025</td><td>Indicado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+<tr data-instituto="Valparaíso"><td>71144</td><td>Valparaíso</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>150005 - MARÍA LÓPEZ</td><td>Andador</td><td>FIN709</td><td>27/11/2025</td><td>Indicado</td><td data-estado="ANULADO">ANULADO</td><td class="estado-articulo"></td><td class="acciones">
+<button class="ver-btn" type="button">Ver contrato</button>
+<button class="btn-indicacion" type="button">Ver indicación</button>
+<button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
+</td></tr>
+</tbody>
+</table>
+</div>
+<div class="footer">Total de indicaciones: 11</div>
+</div>
+<!-- MODAL: Ver Contrato (PDF) -->
+<div aria-hidden="true" class="modal" id="modalPDF">
+<div class="modal-card">
+<div class="modal-header">
+<div>Contrato / Visualización</div>
+<button id="btnCerrarModalPDF" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+</div>
+<div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
+<iframe id="iframePDF" style="width:100%; height:100%; border:none"></iframe>
+</div>
+</div>
+</div>
+<!-- MODAL: Devolución -->
+<div aria-hidden="true" class="modal" id="modalDevolucion" style="display:none; align-items:center; justify-content:center; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000;">
+<div class="modal-card" style="max-width:420px; background:#fff; border-radius:8px; padding:24px;">
+<div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+<div>Devolución de Ayuda Técnica</div>
+<button id="btnCerrarModalDevolucion" style="background:none;border:none;color:#d71920;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+</div>
+<div class="modal-body">
+<form id="formDevolucion">
+<div class="form-row">
+<label for="inputArticulo">Artículo:</label>
+<input class="form-control" id="inputArticulo" required="" type="text"/>
+</div>
+<div class="form-row">
+<label for="inputCantidad">Cantidad:</label>
+<input class="form-control" id="inputCantidad" min="1" required="" type="number" value="1"/>
+</div>
+<div class="form-row">
+<label for="inputObservacion">Observaciones:</label>
+<textarea class="form-control" id="inputObservacion" rows="2"></textarea>
+</div>
+<button class="btn btn-primary" style="background:#d71920;border:none;" type="submit">Registrar devolución</button>
+</form>
+</div>
+</div>
+</div>
+<!-- MODAL: Prevalidacion (tutor) -->
+<div aria-hidden="true" class="modal" id="modalTutor">
+<div class="modal-card">
+<div class="modal-header">
+<div>Prevalidación / Tutor legal</div>
+<button id="btnCerrarModalTutor" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+</div>
+<div class="modal-body">
+<iframe id="iframeTutor" style="width:100%; height:60vh; border:none"></iframe>
+</div>
+</div>
+</div>
+<!-- MODAL: Indicación (nuevo, con contenido formateado) -->
+<div aria-hidden="true" class="modal" id="modalIndicacion">
+<div class="modal-card">
+<div class="modal-header">
+<div>Indicación / Detalle</div>
+<button class="modal-close-icon" id="btnCerrarModalIndicacion" title="Cerrar">×</button>
+</div>
+<div class="modal-body">
+<!-- Este contenedor se rellena dinámicamente -->
+<div class="indicacion" id="contenidoIndicacion"></div>
+</div>
+<div class="modal-footer">
+<button class="btn-secondary" id="btnImprimirIndicacion">Imprimir</button>
+<button class="btn-primary" id="btnCerrarIndicacion">Cerrar</button>
+</div>
+</div>
+</div>
+<!-- MODAL: Anular (CONFIRM) -->
+<div aria-hidden="true" class="modal" id="modalAnular">
+<div class="modal-card">
+<div class="modal-header">
+<div>Confirmar anulación</div>
+<button id="btnCerrarModalAnular" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+</div>
+<div class="modal-body">
+<p id="anularResumen" style="background:#f6f6f6;padding:10px;border-radius:6px;font-size:14px;color:#333"></p>
+<div class="form-row">
+<label for="motivoAnulacion">Motivos de eliminación</label>
+<select id="motivoAnulacion">
+<option>Inidcación mal ingresada</option>
+<option>No necesita ayuda técnica</option>
+<option>Se rechaza ayuda  técnica</option>
+<option>Paciente pasivo</option>
+<option>Existe otra indicación de comodato sin entregar</option>
+<option>Eliminado lista de espera por 3 fallas</option>
+<option>Eliminado lista de espera por 2 ausencias</option>
+</select>
+</div>
+<div class="form-row">
+<label for="obsAnulacion">Observación (Obligatorio)</label>
+<textarea id="obsAnulacion" placeholder="Agrega una observación que complemente el motivo..."></textarea>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn-secondary" id="btnCerrarAnular">Cerrar</button>
+<button class="btn-primary" id="btnConfirmAnular">Anular</button>
+</div>
+</div>
+</div>
+<!-- MODAL: Agendar -->
+<div aria-hidden="true" class="modal" id="modalAgendar">
+<div class="modal-card">
+<div class="modal-header">
+<div>Agregar actividad / Agendar</div>
+<button id="btnCerrarModalAgendar" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+</div>
+<div class="modal-body">
+<div class="form-row">
+<label>Actividad</label>
+<select id="actividadAgendar">
+<option>Entrega ayuda técnica (15 min)</option>
+<option>Entrega ayuda técnica (30 min)</option>
+<option>Evaluación ayuda técnica (30 min)</option>
+</select>
+</div>
+<div class="form-row">
+<label>Prioridad</label>
+<select id="prioridadAgendar">
+<option>Prioritario</option>
+<option>Normal</option>
+<option>Bajo</option>
+</select>
+</div>
+<div class="form-row">
+<label>Plazo</label>
+<select id="plazoAgendar">
+<option>1 Mes</option>
+<option>2 Meses</option>
+<option>3 Meses</option>
+<option>Fecha</option>
+</select>
+</div>
+<div class="form-row">
+<label>Observación</label>
+<textarea id="obsAgendar" placeholder="Observación para la actividad"></textarea>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn-secondary" id="btnCancelarAgendar">Cerrar</button>
+<button class="btn-primary" id="btnGuardarAgendar">Guardar Agendar</button>
+</div>
+</div>
+</div>
+<!-- MODAL: HISTORIAL -->
+<div aria-hidden="true" class="modal" id="modalHistorial">
+<div class="modal-card">
+<div class="modal-header">
+<div>Historial de Entrega / Ayudas Técnicas</div>
+<button id="btnCerrarModalHistorial" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+</div>
+<div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
+<iframe id="iframeHistorial" src="" style="width:100%; height:100%; border:none"></iframe>
+</div>
+</div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* URLs de ejemplo */
-const urlContratoFirmado = "https://docs.google.com/gview?url=https://raw.githubusercontent.com/cesarjimenezb-design/Contrato-Ayuda-Tecnica/main/Contrato%20de%20Entrega%20de%20Ayuda%20T%C3%A9cnica.pdf&embedded=true";
+const urlContratoFirmado = "https://cesarjimenezb-design.github.io/Contrato-Ayuda-Tecnica/";
 const urlPrevalidacion = "https://cesarjimenezb-design.github.io/Prevalidacion-entregaAT/";
 const urlHistorialAT = "https://cesarjimenezb-design.github.io/Historial-entrega-AT/";
+
+/* ========================
+   STOCK — OPCIÓN A
+   ======================== */
+const stockArticulos = {
+  "silla de ruedas": true,
+  "silla de ruedas estándar": false,
+  "mesa cajón": true,
+  "mesa cajón chica": false,
+  "silla neurológica": true,
+  "andador": false
+};
 
 /* FILTRADO */
 function filtrarTabla(){
@@ -534,13 +430,12 @@ function filtrarTabla(){
     const fechaText = fila.cells[4] ? fila.cells[4].textContent : '';
     const fecha = fechaText ? fechaText.split("/").reverse().join("-") : '';
     const estadoTd = fila.querySelector('[data-estado]');
-    const estadoContrato = estadoTd ? (estadoTd.getAttribute('data-estado')||'').toUpperCase() : '';
+    const estadoContrato = estadoTd ? (estadoTd.getAttribute('data-estado')||'') : '';
 
     let mostrar = true;
     if (institutoFiltro && instituto !== institutoFiltro) mostrar = false;
     if (tipoAyudaFiltro && !tipoAyuda.includes(tipoAyudaFiltro)) mostrar = false;
     if (estadoContratoFiltro) {
-      // allow filtering by legacy PENDIENTE (kept) or SOLICITADO/EMITIDO/COMODATO/ANULADO
       if (estadoContrato !== estadoContratoFiltro) mostrar = false;
     }
     if (fechaDesdeFiltro && fecha && fecha < fechaDesdeFiltro) mostrar = false;
@@ -606,7 +501,7 @@ function verIndicacionDesdeFila(fila){
   const estadoIndic = fila.cells[8] ? fila.cells[8].textContent.trim() : '';
   const estadoContrato = fila.querySelector('[data-estado]') ? (fila.querySelector('[data-estado]').getAttribute('data-estado')||'') : '';
 
-  // Montar el HTML de la indicación — he mantenido el formato que me enviaste
+  // Montar el HTML de la indicación — he mantenido el formato 
   const html = `
     <h1 style="color:#E30613; text-align:center; margin:0 0 10px 0;">Indicación Ayuda Técnica</h1>
 
@@ -642,12 +537,10 @@ function verIndicacionDesdeFila(fila){
 
   document.getElementById('contenidoIndicacion').innerHTML = html;
   document.getElementById('modalIndicacion').classList.add('active');
-
 }
 
-/* Cerrar modales PDF/Tutor/Indicacion */
+/* Cerrar modales PDF/Tutor/Indicacion al hacer click fuera del card */
 document.addEventListener('click', function(e){
-  // cerrar modalIndicacion al clickear fuera del modal-card
   const mi = document.getElementById('modalIndicacion');
   if (mi && mi.classList.contains('active')) {
     const card = mi.querySelector('.modal-card');
@@ -657,18 +550,11 @@ document.addEventListener('click', function(e){
   }
 });
 
-document.getElementById('btnCerrarModalPDF').addEventListener('click', ()=>{
-  document.getElementById('modalPDF').classList.remove('active');
-  document.getElementById('iframePDF').src = '';
-});
-document.getElementById('btnCerrarModalTutor').addEventListener('click', ()=>{
-  document.getElementById('modalTutor').classList.remove('active');
-  document.getElementById('iframeTutor').src = '';
-});
-document.getElementById('btnCerrarModalIndicacion').addEventListener('click', ()=> document.getElementById('modalIndicacion').classList.remove('active'));
-document.getElementById('btnCerrarIndicacion').addEventListener('click', ()=> document.getElementById('modalIndicacion').classList.remove('active'));
-document.getElementById('btnImprimirIndicacion').addEventListener('click', ()=>{
-  // impresión simple: abrir en nueva ventana con el HTML del contenido y llamar print()
+document.getElementById('btnCerrarModalPDF').addEventListener('click', ()=>{ document.getElementById('modalPDF').classList.remove('active'); document.getElementById('iframePDF').src = ''; });
+document.getElementById('btnCerrarModalTutor')?.addEventListener('click', ()=>{ document.getElementById('modalTutor').classList.remove('active'); document.getElementById('iframeTutor').src = ''; });
+document.getElementById('btnCerrarModalIndicacion')?.addEventListener('click', ()=> document.getElementById('modalIndicacion').classList.remove('active'));
+document.getElementById('btnCerrarIndicacion')?.addEventListener('click', ()=> document.getElementById('modalIndicacion').classList.remove('active'));
+document.getElementById('btnImprimirIndicacion')?.addEventListener('click', ()=>{
   const contenido = document.getElementById('contenidoIndicacion').innerHTML;
   const w = window.open('', '_blank');
   w.document.write('<html><head><title>Imprimir Indicación</title><link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet"></head><body style="font-family:Nunito Sans, Arial; padding:20px;">' + contenido + '</body></html>');
@@ -786,7 +672,6 @@ function abrirModalAgendar(fila){
 document.getElementById('btnCerrarModalAgendar').addEventListener('click', ()=> document.getElementById('modalAgendar').classList.remove('active'));
 document.getElementById('btnCancelarAgendar').addEventListener('click', ()=> document.getElementById('modalAgendar').classList.remove('active'));
 document.getElementById('btnGuardarAgendar').addEventListener('click', ()=>{
-  // ejemplo: solo cierra y muestra mensaje
   alert('Actividad guardada (demo).');
   document.getElementById('modalAgendar').classList.remove('active');
 });
@@ -799,19 +684,13 @@ const btnCerrarModalHistorial = document.getElementById('btnCerrarModalHistorial
 /* inicialización de handlers globales */
 document.addEventListener('DOMContentLoaded', ()=>{
 
-  // --- NUEVAS REGLAS: mapear Estado indicación -> Estado contrato (sin cambiar diseño)
-  //  - Indicado -> estado contrato en blanco (no hay contrato aún)
-  //  - Evaluado -> puede ser SOLICITADO o EMITIDO (se deja como venga si ya tiene data-estado)
-  //  - Lista de Espera -> SOLICITADO (unificar)
-  //  - Finalizada -> EMITIDO
+  // Mapear estados (mantener compatibilidad con tu lógica previa)
   document.querySelectorAll('#tablaContratosBody tr').forEach(tr=>{
     const estadoIndicText = tr.cells[8] ? (tr.cells[8].textContent||'').trim().toLowerCase() : '';
     const tdEstado = tr.querySelector('[data-estado]');
-    // if there is no tdEstado, skip
     if (!tdEstado) return;
 
     if (estadoIndicText === 'indicado') {
-      // dejar data-estado vacío (sin contrato)
       tdEstado.setAttribute('data-estado','');
       tdEstado.textContent = '';
     } else if (estadoIndicText === 'lista de espera' || estadoIndicText === 'lista de espera') {
@@ -821,8 +700,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
       tdEstado.setAttribute('data-estado','EMITIDO');
       tdEstado.textContent = 'EMITIDO';
     } else {
-      // respetar lo que ya tenga (por ejemplo si viene COMODATO, EMITIDO, SOLICITADO)
-      // y normalizar texto para PENDIENTE legacy
       if (tdEstado.getAttribute('data-estado') === 'PENDIENTE') {
         tdEstado.setAttribute('data-estado','SOLICITADO');
         tdEstado.textContent = 'SOLICITADO';
@@ -830,43 +707,46 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 
-  // insert "Ver indicación" button into each acciones cell (non-destructive)
-  document.querySelectorAll('#tablaContratosBody .acciones').forEach(cell=>{
-    // only add if it doesn't already exist
-    if (!cell.querySelector('.btn-indicacion')){
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'btn-indicacion';
-      b.textContent = 'Ver indicación';
-      // when clicked, open modal with row data
-      b.addEventListener('click', function(e){
-        const fila = this.closest('tr');
-        // ensure row selected visually
-        if (filaSeleccionada && filaSeleccionada !== fila) filaSeleccionada.classList.remove('seleccionada');
-        filaSeleccionada = fila;
-        fila.classList.add('seleccionada');
-        actualizarToolbar();
-        // show indicacion
-        verIndicacionDesdeFila(fila);
-        e.stopPropagation();
-      });
-      cell.appendChild(b);
-    }
-  });
+  // Aplicar estado de artículo (stock) y asignar handlers para botón notificación
+  aplicarEstadoArticulo();
 
-  // attach ver contrato buttons (columna acciones) preserving functionality
+  // attach ver contrato buttons
+  document.querySelectorAll('.ver-btn').forEach(btn=>{
+    // remove existing listeners to avoid duplicates (in case of hot reload)
+    btn.replaceWith(btn.cloneNode(true));
+  });
+  // reselect after cloning
   document.querySelectorAll('.ver-btn').forEach(btn=>{
     btn.addEventListener('click', function(e){
       const fila = this.closest('tr');
-      // ensure row selected visually
       if (filaSeleccionada && filaSeleccionada !== fila) filaSeleccionada.classList.remove('seleccionada');
       filaSeleccionada = fila;
       fila.classList.add('seleccionada');
       actualizarToolbar();
-      // open contract view
       verContratoDesdeFila(fila);
       e.stopPropagation();
     });
+  });
+
+  // attach ver indicacion buttons
+  document.querySelectorAll('.btn-indicacion').forEach(btn=>{
+    btn.replaceWith(btn.cloneNode(true));
+  });
+  document.querySelectorAll('.btn-indicacion').forEach(btn=>{
+    btn.addEventListener('click', function(e){
+      const fila = this.closest('tr');
+      if (filaSeleccionada && filaSeleccionada !== fila) filaSeleccionada.classList.remove('seleccionada');
+      filaSeleccionada = fila;
+      fila.classList.add('seleccionada');
+      actualizarToolbar();
+      verIndicacionDesdeFila(fila);
+      e.stopPropagation();
+    });
+  });
+
+  // attach notification buttons (they already have onclick from aplicarEstadoArticulo, but ensure idempotency)
+  document.querySelectorAll('.btn-notificacion').forEach(btn=>{
+    // no-op here; aplicarEstadoArticulo sets onclick and classes
   });
 
   // attach selection to rows
@@ -906,13 +786,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     alert('Opciones accesibilidad (demo) para: ' + d.correl);
   });
 
-  /* ---- REEMPLAZO: acción del botón HISTORIAL (btnTiempo)
-        Antes mostraba un alert demo; ahora abre modalHistorial y carga iframeHistorial.
-     ---- */
+  /* ---- REEMPLAZO: acción del botón HISTORIAL (btnTiempo) ---- */
   document.getElementById('btnTiempo').addEventListener('click', ()=>{
     const d = obtenerDatosFila(); if (!d) return alert('Selecciona una fila');
-    // opcional: podríamos pasar query string con correlativo si lo deseas
-    // const src = urlHistorialAT + '?correl=' + encodeURIComponent(d.correl);
     const src = urlHistorialAT;
     iframeHistorial.src = src;
     modalHistorial.classList.add('active');
@@ -939,7 +815,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   // activar estado inicial de toolbar
   actualizarToolbar();
-
 
   // EXPORTAR A EXCEL — SOLO FILAS VISIBLES
   document.getElementById('btnExcel').addEventListener('click', ()=>{
@@ -982,7 +857,6 @@ document.getElementById('btnCero').onclick = function() {
   document.getElementById('inputObservacion').value = `Devolución correlativo: ${correl} - ${paciente}`;
 
   document.getElementById('modalDevolucion').classList.add('active');
-  // also ensure display flex for legacy inline style
   document.getElementById('modalDevolucion').style.display = 'flex';
 };
 
@@ -1019,6 +893,66 @@ function marcarDevolucionEnFila() {
   filaSeleccionada.classList.add('devuelto');
   filaSeleccionada.style.background = '#e8ffea';
 }
+
+/* ========================
+   Funciones stock / notificaciones
+   ======================== */
+
+function aplicarEstadoArticulo(){
+  document.querySelectorAll("#tablaContratosBody tr").forEach(tr => {
+    const estadoContrato = (tr.querySelector("[data-estado]")?.getAttribute("data-estado") || "").toString().toUpperCase();
+    const tdEstadoFin = tr.querySelector(".estado-articulo");
+    const btnNotif = tr.querySelector(".btn-notificacion");
+
+    let estadoFin = "";
+    let color = "";
+    let mensaje = "";
+
+    if (estadoContrato === "EMITIDO" || estadoContrato === "COMODATO") {
+      estadoFin = "ENTREGADO";
+      color = "#6EB43F";
+      mensaje = "✔ Contrato emitido / artículo entregado (hay stock).";
+    } else if (estadoContrato === "SOLICITADO") {
+      estadoFin = "SOLICITUD DE TRASPASO";
+      color = "#D71920";
+      mensaje = "⚠ Solicitud: revisar disponibilidad o traspaso.";
+    } else if (estadoContrato === "LISTA DE ESPERA" || estadoContrato === "PENDIENTE" || estadoContrato === "") {
+      estadoFin = "SOLICITUD DE CONSUMO";
+      color = "#D71920";
+      mensaje = "❌ Sin stock. Pasó a solicitud de consumo/lista de espera.";
+	  
+    } else if (estadoContrato === "ANULADO") {
+      estadoFin = "ANULADO";
+      color = "#666666";
+      mensaje = "La indicación fue anulada.";
+    } else if (estadoContrato === "DEVUELTO") {
+      estadoFin = "DEVUELTO";
+      color = "#6EB43F";
+      mensaje = "✔ Artículo devuelto y disponible en stock.";
+    } else {
+      estadoFin = "SIN DEFINIR";
+      color = "#D71920";
+      mensaje = "Estado no reconocido.";
+    }
+
+    if (tdEstadoFin) {
+      tdEstadoFin.innerHTML = `<span style="color:${color}; font-weight:700">${estadoFin}</span>`;
+    }
+
+    if (btnNotif) {
+      btnNotif.onclick = (e) => { e.stopPropagation(); alert(mensaje); };
+      if (color === "#6EB43F") {
+        btnNotif.classList.add("notif-verde");
+        btnNotif.classList.remove("notif-rojo");
+      } else {
+        btnNotif.classList.add("notif-rojo");
+        btnNotif.classList.remove("notif-verde");
+      }
+    }
+  });
+}
+
+
 </script>
 </body>
 </html>
