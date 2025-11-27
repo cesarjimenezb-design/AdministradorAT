@@ -4,8 +4,10 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Mantenedor de Contratos - Teletón (Final) - v2</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
 <style>
   :root{
     --rojo-teleton:#D71920;
@@ -15,63 +17,335 @@
     --gris-claro:#E9E9E9;
   }
   *{box-sizing:border-box}
-  body {font-family:'Nunito Sans',sans-serif; margin:0; background:var(--gris-fondo); color:#222;}
-  .topbar {display:flex; align-items:center; gap:12px; background:#fff; padding:10px 14px; border-bottom:1px solid #ececec;}
+  body {
+    font-family:'Nunito Sans',sans-serif; 
+    margin:0; background:var(--gris-fondo); 
+    color:#222;
+  }
+
+  .topbar {
+    display:flex; 
+    align-items:center; 
+    gap:12px; 
+    background:#fff; 
+    padding:10px 14px; 
+    border-bottom:1px solid #ececec;
+  }
   .topbar img{height:48px}
-  header {background:var(--rojo-teleton); color:#fff; padding:12px 20px; font-size:20px; font-weight:700}
-  .container{max-width:1200px; margin:18px auto; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.06)}
-  .filtros-wrapper {position:sticky; top:0; background:#fff; z-index:60; border-bottom:3px solid var(--rojo-teleton)}
-  .filtros {display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:12px; padding:14px; align-items:end;}
-  .toolbar-row {display:flex; gap:10px; padding:10px 14px; justify-content:flex-end; background:#fff; border-top:1px solid #f0f0f0}
-  label{font-weight:600; color:var(--azul-teleton); margin-bottom:6px; display:block}
-  select,input{width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:6px}
-  .btn-limpiar{background:var(--verde-teleton); color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-weight:600}
-  .btn-toolbar{background:var(--rojo-teleton); color:#fff; border:none; border-radius:8px; width:42px; height:42px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px}
-  .btn-toolbar[disabled]{background:#E9E9E9; color:#bbb; cursor:not-allowed; opacity:0.5}
+
+  header {
+    background:var(--rojo-teleton); 
+    color:#fff; 
+    padding:12px 20px; 
+    font-size:20px; 
+    font-weight:700;
+  }
+
+  .container{
+    max-width:1200px; 
+    margin:18px auto; 
+    background:#fff; 
+    border-radius:8px; 
+    overflow:hidden; 
+    box-shadow:0 2px 10px rgba(0,0,0,0.06)
+  }
+
+  .filtros-wrapper {
+    position:sticky; 
+    top:0; 
+    background:#fff; 
+    z-index:60; 
+    border-bottom:3px solid var(--rojo-teleton)
+  }
+
+  .filtros {
+    display:grid; 
+    grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); 
+    gap:12px; padding:14px; 
+    align-items:end;
+  }
+
+  .toolbar-row {
+    display:flex; 
+    gap:10px; 
+    padding:10px 14px; 
+    justify-content:flex-end; 
+    background:#fff; 
+    border-top:1px solid #f0f0f0
+  }
+
+  label{
+    font-weight:600; 
+    color:var(--azul-teleton); 
+    margin-bottom:6px; 
+    display:block
+  }
+
+  select,input{
+    width:100%; 
+    padding:8px 10px; 
+    border:1px solid #ccc; 
+    border-radius:6px
+  }
+
+  .btn-limpiar{
+    background:var(--verde-teleton); 
+    color:#fff; 
+    border:none; 
+    padding:8px 14px; 
+    border-radius:6px; 
+    cursor:pointer; 
+    font-weight:600
+  }
+
+  .btn-toolbar{
+    background:var(--rojo-teleton); 
+    color:#fff; 
+    border:none; 
+    border-radius:8px; 
+    width:42px; 
+    height:42px; 
+    display:inline-flex; 
+    align-items:center; 
+    justify-content:center; 
+    cursor:pointer; 
+    font-size:18px
+  }
+
+  .btn-toolbar[disabled]{
+    background:#E9E9E9; 
+    color:#bbb; 
+    cursor:not-allowed; 
+    opacity:0.5
+  }
+
   .btn-toolbar:hover:not([disabled]){background:#b21214}
-  table{width:100%; border-collapse:collapse; table-layout:auto}
-  thead th{background:var(--rojo-teleton); color:#fff; padding:10px; font-weight:700; text-align:left}
-  tbody td{padding:10px; border-bottom:1px solid var(--gris-claro); vertical-align:middle}
-  tbody tr:hover{background:#fafafa}
-  .acciones{display:flex; gap:8px; align-items:center; flex-wrap:wrap; min-width:220px}
-  .acciones .ver-btn, .acciones .btn-indicacion, .acciones .btn-notificacion{background:var(--azul-teleton); color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:600}
-  .acciones .ver-btn:hover, .acciones .btn-indicacion:hover{background:var(--verde-teleton)}
-  .acciones .btn-indicacion{background:transparent;color:var(--rojo-teleton);border:1px solid var(--rojo-teleton);padding:6px 10px;border-radius:6px;font-weight:600}
-  .acciones .btn-indicacion:hover{background:var(--rojo-teleton);color:#fff}
-  .acciones .btn-notificacion{width:36px; height:36px; padding:0; border-radius:50%; display:inline-flex; align-items:center; justify-content:center}
+
+  table{
+    width:100%; 
+    border-collapse:collapse; 
+    table-layout:auto
+  }
+
+  thead th{
+    background:var(--rojo-teleton); 
+    color:#fff; 
+    padding:10px; 
+    font-weight:700; 
+    text-align:left
+  }
+
+  tbody td{
+    padding:10px; 
+    border-bottom:1px solid var(--gris-claro); 
+    vertical-align:middle
+  }
+
+  tbody tr:hover{
+    background:#fafafa
+  }
+
+  .acciones{
+    display:flex; 
+    gap:8px; 
+    align-items:center; 
+    flex-wrap:wrap; 
+    min-width:220px
+  }
+
+  .acciones .ver-btn, 
+  .acciones .btn-indicacion, 
+  .acciones .btn-notificacion {
+    background:var(--azul-teleton); 
+    color:#fff; 
+    border:none; 
+    padding:6px 10px; 
+    border-radius:6px; 
+    cursor:pointer; 
+    font-weight:600
+  }
+
+  .acciones .btn-indicacion{
+    background:transparent;
+    color:var(--rojo-teleton);
+    border:1px solid var(--rojo-teleton);
+    padding:6px 10px;
+    border-radius:6px;
+    font-weight:600
+  }
+
+  .acciones .btn-indicacion:hover{
+    background:var(--rojo-teleton);
+    color:#fff
+  }
+
+  .acciones .btn-notificacion{
+    width:36px; 
+    height:36px; 
+    padding:0; 
+    border-radius:50%; 
+    display:inline-flex; 
+    align-items:center; 
+    justify-content:center
+  }
+
   .notif-verde{background:#6EB43F !important; color:#fff !important}
   .notif-rojo{background:#D71920 !important; color:#fff !important}
-  tr.seleccionada{background:#fff0f0 !important; outline:2px solid var(--rojo-teleton)}
-  tr.anulada{background:#efefef !important; color:#666}
-  .table-area{height:65vh; overflow:auto}
-  .footer{padding:12px 18px; text-align:right; background:#fafafa; border-top:2px solid var(--rojo-teleton); font-weight:600; color:var(--azul-teleton)}
 
-  .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); z-index:200}
+  tr.seleccionada{
+    background:#fff0f0 !important; 
+    outline:2px solid var(--rojo-teleton)
+  }
+
+  tr.anulada{
+    background:#efefef !important; 
+    color:#666
+  }
+
+  tr.devuelto td{
+    color:#1a6f2b;
+    font-weight:700;
+  }
+
+  .table-area{
+    height:65vh; 
+    overflow:auto
+  }
+
+  .footer{
+    padding:12px 18px; 
+    text-align:right; 
+    background:#fafafa; 
+    border-top:2px solid var(--rojo-teleton); 
+    font-weight:600; 
+    color:var(--azul-teleton)
+  }
+
+  /* MODALES */
+  .modal{
+    position:fixed; 
+    inset:0; 
+    display:none; 
+    align-items:center; 
+    justify-content:center; 
+    background:rgba(0,0,0,0.55); 
+    z-index:200
+  }
+
   .modal.active{display:flex}
-  .modal-card{background:#fff; width:90%; max-width:920px; max-height:85vh; border-radius:8px; overflow:auto; box-shadow:0 10px 30px rgba(0,0,0,0.25)}
-  .modal-header{background:var(--rojo-teleton); color:#fff; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; font-weight:700}
-  .modal-body{padding:14px}
-  .modal-footer{display:flex; gap:10px; justify-content:flex-end; padding:12px; border-top:1px solid #eee}
-  .btn-secondary{background:#e9e9e9; border:none; padding:8px 12px; border-radius:6px; cursor:pointer}
-  .btn-primary{background:var(--rojo-teleton); color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer}
-  .form-row{margin-bottom:12px}
-  .form-row label{margin-bottom:6px}
-  textarea{width:100%; min-height:80px; padding:8px; border:1px solid #ccc; border-radius:6px}
-  @media (max-width:720px){ .filtros{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .acciones{min-width:160px} }
 
-  .indicacion .section-title{background:#E30613;color:#fff;padding:6px;font-weight:bold;margin-top:16px;border-radius:4px}
-  .indicacion .section{border:1px solid #ccc;border-radius:8px;padding:12px;margin-top:10px}
-  .indicacion .row{display:flex;flex-wrap:wrap;margin-bottom:8px}
-  .indicacion .cell{flex:1 1 33%;padding:6px}
-  .indicacion .label{font-weight:bold;color:#005288}
-  .modal-close-icon{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+  .modal-card{
+    background:#fff; 
+    width:90%; 
+    max-width:1100px; 
+    max-height:85vh; 
+    border-radius:8px; 
+    overflow:auto; 
+    box-shadow:0 10px 30px rgba(0,0,0,0.25)
+  }
 
-  #modalHistorial .modal-card{max-width:1100px}
-  #iframeHistorial{width:100%; height:100%; border:none}
+  .modal-header{
+    background:var(--rojo-teleton); 
+    color:#fff; 
+    padding:10px 14px; 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+    font-weight:700
+  }
 
-  .stock-alto{color:#1a6f2b; font-weight:700}
-  .stock-bajo{color:#b21214; font-weight:700}
-  tr.devuelto td { color: #1a6f2b; font-weight:700; }
+  .modal-body{
+    padding:14px
+  }
+
+  .modal-footer{
+    display:flex; 
+    gap:10px; 
+    justify-content:flex-end; 
+    padding:12px; 
+    border-top:1px solid #eee
+  }
+
+  .btn-secondary{
+    background:#e9e9e9; 
+    border:none; 
+    padding:8px 12px; 
+    border-radius:6px; 
+    cursor:pointer
+  }
+
+  .btn-primary{
+    background:var(--rojo-teleton); 
+    color:#fff; 
+    border:none; 
+    padding:8px 12px; 
+    border-radius:6px; 
+    cursor:pointer
+  }
+
+  textarea{
+    width:100%; 
+    min-height:80px; 
+    padding:8px; 
+    border:1px solid #ccc; 
+    border-radius:6px
+  }
+
+  .modal-close-icon{
+    background:none; 
+    border:none; 
+    color:#fff; 
+    font-size:22px; 
+    cursor:pointer
+  }
+/* === FORMATO DEL MODAL DE INDICACIÓN (ORIGINAL) === */
+
+#modalIndicacion .indicacion {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+#modalIndicacion h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #D71920;
+  text-align: center;
+}
+
+#modalIndicacion .section-title {
+  background: #f2f2f2;
+  padding: 8px;
+  font-weight: 700;
+  margin-top: 16px;
+  border-left: 4px solid #D71920;
+}
+
+#modalIndicacion .section {
+  padding: 10px 6px;
+  border: 1px solid #e4e4e4;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background: #fafafa;
+}
+
+#modalIndicacion .row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+#modalIndicacion .cell {
+  flex: 1 1 33%;
+  padding: 4px;
+}
+
+#modalIndicacion .label {
+  font-weight: 700;
+  color: #003366;
+  margin-right: 6px;
+}
+
 </style>
 </head>
 <body>
@@ -84,12 +358,15 @@
 <div style="font-size:12px; color:#666">IT 131 - SANTIAGO</div>
 </div>
 </div>
+
 <header>Administrador Ayudas Técnicas</header>
+
 <div class="panel-body">
 <div class="panel panel-default">
 <div class="panel-heading">
 <div class="filtros-wrapper">
 <div class="filtros">
+
 <div>
 <label>Instituto</label>
 <select id="filtroInstituto">
@@ -100,6 +377,7 @@
 <option value="coquimbo">Coquimbo</option>
 </select>
 </div>
+
 <div>
 <label>Especialidad</label>
 <select id="especialidad">
@@ -108,6 +386,7 @@
 <option>Terapia Ocupacional</option>
 </select>
 </div>
+
 <div>
 <label>Profesional</label>
 <select id="profesional">
@@ -117,6 +396,7 @@
 <option>Morales Vilca Karen</option>
 </select>
 </div>
+
 <div>
 <label>Tipo ayuda técnica</label>
 <select id="tipoAyuda">
@@ -126,14 +406,17 @@
 <option>Andador</option>
 </select>
 </div>
+
 <div>
 <label>Fecha desde</label>
 <input id="fechaDesde" type="date"/>
 </div>
+
 <div>
 <label>Fecha hasta</label>
 <input id="fechaHasta" type="date"/>
 </div>
+
 <div>
 <label>Estado contrato</label>
 <select id="filterEstado">
@@ -145,12 +428,16 @@
 <option value="ANULADO">Anulado</option>
 </select>
 </div>
+
 <div style="display:flex; align-items:center; gap:8px">
 <button class="btn-limpiar" id="btnLimpiar">Limpiar filtros</button>
 </div>
+
 </div>
 </div>
 </div>
+
+<!-- TOOLBAR -->
 <div class="toolbar-row">
 <button class="btn-toolbar" id="btnAgregar" title="Notificaciones"><i class="fa-solid fa-bell"></i></button>
 <button class="btn-toolbar" disabled id="btnSalud" title="Agendar"><i class="fa-solid fa-kit-medical"></i></button>
@@ -162,7 +449,10 @@
 <button class="btn-toolbar" disabled id="btnTiempo" title="Historial"><i class="fa-solid fa-clock"></i></button>
 <button class="btn-toolbar" id="btnExcel" title="Exportar a Excel"><i class="fa-solid fa-file-excel"></i></button>
 </div>
+
 </div>
+
+<!-- TABLA -->
 <div class="table-area" id="tableArea">
 <table aria-label="Tabla de contratos" id="tablaContratos">
 <thead>
@@ -181,223 +471,332 @@
 <th style="min-width:220px">Acciones</th>
 </tr>
 </thead>
+
 <tbody id="tablaContratosBody">
-<tr data-instituto="Metropolitana"><td>69558</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>94791 - CAEL FERNANDO TARQUI MARQUEZ</td><td>Silla de ruedas estándar</td><td>FIN700</td><td>26/06/2025</td><td>Evaluado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Metropolitana">
+<td>69558</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td>
+<td>94791 - CAEL FERNANDO TARQUI MARQUEZ</td>
+<td>Silla de ruedas estándar</td>
+<td>FIN700</td><td>26/06/2025</td><td>Evaluado</td>
+<td data-estado=""></td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Arica"><td>67966</td><td>Arica</td><td>García Pasten Verónica</td><td>Morales Vilca Karen</td><td>130103 - BENJAMIN ISAAC LORENZO CRUZ SALINAS</td><td>Mesa cajón chica</td><td>FIN701</td><td>29/10/2025</td><td>Evaluado</td><td data-estado="SOLICITADO">SOLICITADO</td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Arica">
+<td>67966</td><td>Arica</td><td>García Pasten Verónica</td><td>Morales Vilca Karen</td>
+<td>130103 - BENJAMIN ISAAC LORENZO CRUZ SALINAS</td>
+<td>Mesa cajón chica</td>
+<td>FIN701</td>
+<td>29/10/2025</td>
+<td>Evaluado</td>
+<td data-estado="SOLICITADO">SOLICITADO</td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Coquimbo"><td>70021</td><td>Coquimbo</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>120220 - MATÍAS JAVIER ROJAS LARA</td><td>Andador</td><td>FIN702</td><td>02/11/2025</td><td>Indicado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Coquimbo">
+<td>70021</td><td>Coquimbo</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td>
+<td>120220 - MATÍAS JAVIER ROJAS LARA</td>
+<td>Andador</td>
+<td>FIN702</td>
+<td>02/11/2025</td>
+<td>Indicado</td>
+<td data-estado=""></td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Valparaíso"><td>71001</td><td>Valparaíso</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>101020 - VICENTE FIGUEROA PUEBLA</td><td>Silla neurológica</td><td>FIN703</td><td>12/11/2025</td><td>Finalizada</td><td data-estado="EMITIDO">EMITIDO</td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Valparaíso">
+<td>71001</td><td>Valparaíso</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td>
+<td>101020 - VICENTE FIGUEROA PUEBLA</td>
+<td>Silla neurológica</td>
+<td>FIN703</td>
+<td>12/11/2025</td>
+<td>Finalizada</td>
+<td data-estado="EMITIDO">EMITIDO</td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Metropolitana"><td>71040</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>121212 - Camila Bastias Rios</td><td>Silla neurológica</td><td>FIN704</td><td>12/11/2025</td><td>Lista de Espera</td><td data-estado="SOLICITADO">SOLICITADO</td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Metropolitana">
+<td>71040</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td>
+<td>121212 - Camila Bastias Rios</td>
+<td>Silla neurológica</td>
+<td>FIN704</td>
+<td>12/11/2025</td>
+<td>Lista de Espera</td>
+<td data-estado="SOLICITADO">SOLICITADO</td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Valparaíso"><td>71100</td><td>Valparaíso</td><td>García Pasten Verónica</td><td>Tapia Soto Claudia</td><td>150001 - ROSA MARINA PÉREZ</td><td>Andador</td><td>FIN705</td><td>15/11/2025</td><td>Indicado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Valparaíso">
+<td>71100</td><td>Valparaíso</td><td>García Pasten Verónica</td><td>Tapia Soto Claudia</td>
+<td>150001 - ROSA MARINA PÉREZ</td>
+<td>Andador</td>
+<td>FIN705</td>
+<td>15/11/2025</td>
+<td>Indicado</td>
+<td data-estado=""></td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Coquimbo"><td>71111</td><td>Coquimbo</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>150002 - JUAN PEREZ</td><td>Silla de ruedas</td><td>FIN706</td><td>20/11/2025</td><td>Finalizada</td><td data-estado="EMITIDO">EMITIDO</td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Coquimbo">
+<td>71111</td><td>Coquimbo</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td>
+<td>150002 - JUAN PEREZ</td>
+<td>Silla de ruedas</td>
+<td>FIN706</td>
+<td>20/11/2025</td>
+<td>Finalizada</td>
+<td data-estado="EMITIDO">EMITIDO</td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Metropolitana"><td>71122</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>150003 - ANA GÓMEZ</td><td>Mesa cajón</td><td>FIN707</td><td>22/11/2025</td><td>Lista de Espera</td><td data-estado="SOLICITADO">SOLICITADO</td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Metropolitana">
+<td>71122</td><td>Metropolitana</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td>
+<td>150003 - ANA GÓMEZ</td>
+<td>Mesa cajón</td>
+<td>FIN707</td>
+<td>22/11/2025</td>
+<td>Lista de Espera</td>
+<td data-estado="SOLICITADO">SOLICITADO</td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Arica"><td>71133</td><td>Arica</td><td>García Pasten Verónica</td><td>Morales Vilca Karen</td><td>150004 - LUIS TORRES</td><td>Silla neurológica</td><td>FIN708</td><td>25/11/2025</td><td>Indicado</td><td data-estado=""></td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Arica">
+<td>71133</td><td>Arica</td><td>García Pasten Verónica</td><td>Morales Vilca Karen</td>
+<td>150004 - LUIS TORRES</td>
+<td>Silla neurológica</td>
+<td>FIN708</td>
+<td>25/11/2025</td>
+<td>Indicado</td>
+<td data-estado=""></td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
-<tr data-instituto="Valparaíso"><td>71144</td><td>Valparaíso</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td><td>150005 - MARÍA LÓPEZ</td><td>Andador</td><td>FIN709</td><td>27/11/2025</td><td>Indicado</td><td data-estado="ANULADO">ANULADO</td><td class="estado-articulo"></td><td class="acciones">
+
+<tr data-instituto="Valparaíso">
+<td>71144</td><td>Valparaíso</td><td>Tapia Soto Claudia</td><td>Morales Vilca Karen</td>
+<td>150005 - MARÍA LÓPEZ</td>
+<td>Andador</td>
+<td>FIN709</td>
+<td>27/11/2025</td>
+<td>Indicado</td>
+<td data-estado="ANULADO">ANULADO</td>
+<td class="estado-articulo"></td>
+<td class="acciones">
 <button class="ver-btn" type="button">Ver contrato</button>
 <button class="btn-indicacion" type="button">Ver indicación</button>
 <button class="btn-notificacion" title="Notificaciones" type="button"><i class="fa-solid fa-bell"></i></button>
 </td></tr>
+
 </tbody>
 </table>
 </div>
+
 <div class="footer">Total de indicaciones: 11</div>
-</div>
-
+<!-- MODAL VER CONTRATO -->
+<!-- modalPDF (Contrato / Visualización) -->
 <div aria-hidden="true" class="modal" id="modalPDF">
-<div class="modal-card">
-<div class="modal-header">
-<div>Contrato / Visualización</div>
-<button id="btnCerrarModalPDF" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
-</div>
-<div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
-<iframe id="iframePDF" style="width:100%; height:100%; border:none"></iframe>
-</div>
-</div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>Contrato / Visualización</div>
+      <button id="btnCerrarModalPDF" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+    </div>
+    <div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
+      <iframe id="iframePDF" style="width:100%; height:100%; border:none"></iframe>
+    </div>
+  </div>
 </div>
 
+<!-- modalDevolucion (original) -->
 <div aria-hidden="true" class="modal" id="modalDevolucion" style="display:none; align-items:center; justify-content:center; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000;">
-<div class="modal-card" style="max-width:420px; background:#fff; border-radius:8px; padding:24px;">
-<div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
-<div>Devolución de Ayuda Técnica</div>
-<button id="btnCerrarModalDevolucion" style="background:none;border:none;color:#d71920;font-size:20px;cursor:pointer" title="Cerrar">×</button>
-</div>
-<div class="modal-body">
-<form id="formDevolucion">
-<div class="form-row">
-<label for="inputArticulo">Artículo:</label>
-<input class="form-control" id="inputArticulo" required type="text"/>
-</div>
-<div class="form-row">
-<label for="inputCantidad">Cantidad:</label>
-<input class="form-control" id="inputCantidad" min="1" required type="number" value="1"/>
-</div>
-<div class="form-row">
-<label for="inputObservacion">Observaciones:</label>
-<textarea class="form-control" id="inputObservacion" rows="2"></textarea>
-</div>
-<button class="btn btn-primary" style="background:#d71920;border:none;" type="submit">Registrar devolución</button>
-</form>
-</div>
-</div>
+  <div class="modal-card" style="max-width:420px; background:#fff; border-radius:8px; padding:24px;">
+    <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+      <div>Devolución de Ayuda Técnica</div>
+      <button id="btnCerrarModalDevolucion" style="background:none;border:none;color:#d71920;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="formDevolucion">
+        <div class="form-row">
+          <label for="inputArticulo">Artículo:</label>
+          <input class="form-control" id="inputArticulo" required type="text"/>
+        </div>
+        <div class="form-row">
+          <label for="inputCantidad">Cantidad:</label>
+          <input class="form-control" id="inputCantidad" min="1" required type="number" value="1"/>
+        </div>
+        <div class="form-row">
+          <label for="inputObservacion">Observaciones:</label>
+          <textarea class="form-control" id="inputObservacion" rows="2"></textarea>
+        </div>
+        <button class="btn btn-primary" style="background:#d71920;border:none;" type="submit">Registrar devolución</button>
+      </form>
+    </div>
+  </div>
 </div>
 
+<!-- modalTutor -->
 <div aria-hidden="true" class="modal" id="modalTutor">
-<div class="modal-card">
-<div class="modal-header">
-<div>Prevalidación / Tutor legal</div>
-<button id="btnCerrarModalTutor" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
-</div>
-<div class="modal-body">
-<iframe id="iframeTutor" style="width:100%; height:60vh; border:none"></iframe>
-</div>
-</div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>Prevalidación / Tutor legal</div>
+      <button id="btnCerrarModalTutor" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+    </div>
+    <div class="modal-body">
+      <iframe id="iframeTutor" style="width:100%; height:60vh; border:none"></iframe>
+    </div>
+  </div>
 </div>
 
+<!-- modalIndicacion (original) -->
 <div aria-hidden="true" class="modal" id="modalIndicacion">
-<div class="modal-card">
-<div class="modal-header">
-<div>Indicación / Detalle</div>
-<button class="modal-close-icon" id="btnCerrarModalIndicacion" title="Cerrar">×</button>
-</div>
-<div class="modal-body">
-<div class="indicacion" id="contenidoIndicacion"></div>
-</div>
-<div class="modal-footer">
-<button class="btn-secondary" id="btnImprimirIndicacion">Imprimir</button>
-<button class="btn-primary" id="btnCerrarIndicacion">Cerrar</button>
-</div>
-</div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>Indicación / Detalle</div>
+      <button class="modal-close-icon" id="btnCerrarModalIndicacion" title="Cerrar">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="indicacion" id="contenidoIndicacion"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="btnImprimirIndicacion">Imprimir</button>
+      <button class="btn-primary" id="btnCerrarIndicacion">Cerrar</button>
+    </div>
+  </div>
 </div>
 
+<!-- modalAnular (original) -->
 <div aria-hidden="true" class="modal" id="modalAnular">
-<div class="modal-card">
-<div class="modal-header">
-<div>Confirmar anulación</div>
-<button id="btnCerrarModalAnular" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
-</div>
-<div class="modal-body">
-<p id="anularResumen" style="background:#f6f6f6;padding:10px;border-radius:6px;font-size:14px;color:#333"></p>
-<div class="form-row">
-<label for="motivoAnulacion">Motivos de eliminación</label>
-<select id="motivoAnulacion">
-<option>Inidcación mal ingresada</option>
-<option>No necesita ayuda técnica</option>
-<option>Se rechaza ayuda  técnica</option>
-<option>Paciente pasivo</option>
-<option>Existe otra indicación de comodato sin entregar</option>
-<option>Eliminado lista de espera por 3 fallas</option>
-<option>Eliminado lista de espera por 2 ausencias</option>
-</select>
-</div>
-<div class="form-row">
-<label for="obsAnulacion">Observación (Obligatorio)</label>
-<textarea id="obsAnulacion" placeholder="Agrega una observación que complemente el motivo..."></textarea>
-</div>
-</div>
-<div class="modal-footer">
-<button class="btn-secondary" id="btnCerrarAnular">Cerrar</button>
-<button class="btn-primary" id="btnConfirmAnular">Anular</button>
-</div>
-</div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>Confirmar anulación</div>
+      <button id="btnCerrarModalAnular" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="anularResumen" style="background:#f6f6f6;padding:10px;border-radius:6px;font-size:14px;color:#333"></p>
+      <div class="form-row">
+        <label for="motivoAnulacion">Motivos de eliminación</label>
+        <select id="motivoAnulacion">
+          <option>Inidcación mal ingresada</option>
+          <option>No necesita ayuda técnica</option>
+          <option>Se rechaza ayuda  técnica</option>
+          <option>Paciente pasivo</option>
+          <option>Existe otra indicación de comodato sin entregar</option>
+          <option>Eliminado lista de espera por 3 fallas</option>
+          <option>Eliminado lista de espera por 2 ausencias</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="obsAnulacion">Observación (Obligatorio)</label>
+        <textarea id="obsAnulacion" placeholder="Agrega una observación que complemente el motivo..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="btnCerrarAnular">Cerrar</button>
+      <button class="btn-primary" id="btnConfirmAnular">Anular</button>
+    </div>
+  </div>
 </div>
 
+<!-- modalAgendar (original) -->
 <div aria-hidden="true" class="modal" id="modalAgendar">
-<div class="modal-card">
-<div class="modal-header">
-<div>Agregar actividad / Agendar</div>
-<button id="btnCerrarModalAgendar" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
-</div>
-<div class="modal-body">
-<div class="form-row">
-<label>Actividad</label>
-<select id="actividadAgendar">
-<option>Entrega ayuda técnica (15 min)</option>
-<option>Entrega ayuda técnica (30 min)</option>
-<option>Evaluación ayuda técnica (30 min)</option>
-</select>
-</div>
-<div class="form-row">
-<label>Prioridad</label>
-<select id="prioridadAgendar">
-<option>Prioritario</option>
-<option>Normal</option>
-<option>Bajo</option>
-</select>
-</div>
-<div class="form-row">
-<label>Plazo</label>
-<select id="plazoAgendar">
-<option>1 Mes</option>
-<option>2 Meses</option>
-<option>3 Meses</option>
-<option>Fecha</option>
-</select>
-</div>
-<div class="form-row">
-<label>Observación</label>
-<textarea id="obsAgendar" placeholder="Observación para la actividad"></textarea>
-</div>
-</div>
-<div class="modal-footer">
-<button class="btn-secondary" id="btnCancelarAgendar">Cerrar</button>
-<button class="btn-primary" id="btnGuardarAgendar">Guardar Agendar</button>
-</div>
-</div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>Agregar actividad / Agendar</div>
+      <button id="btnCerrarModalAgendar" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>Actividad</label>
+        <select id="actividadAgendar">
+          <option>Entrega ayuda técnica (15 min)</option>
+          <option>Entrega ayuda técnica (30 min)</option>
+          <option>Evaluación ayuda técnica (30 min)</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Prioridad</label>
+        <select id="prioridadAgendar">
+          <option>Prioritario</option>
+          <option>Normal</option>
+          <option>Bajo</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Plazo</label>
+        <select id="plazoAgendar">
+          <option>1 Mes</option>
+          <option>2 Meses</option>
+          <option>3 Meses</option>
+          <option>Fecha</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Observación</label>
+        <textarea id="obsAgendar" placeholder="Observación para la actividad"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="btnCancelarAgendar">Cerrar</button>
+      <button class="btn-primary" id="btnGuardarAgendar">Guardar Agendar</button>
+    </div>
+  </div>
 </div>
 
+<!-- modalHistorial (original) -->
 <div aria-hidden="true" class="modal" id="modalHistorial">
-<div class="modal-card">
-<div class="modal-header">
-<div>Historial de Entrega / Ayudas Técnicas</div>
-<button id="btnCerrarModalHistorial" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>Historial de Entrega / Ayudas Técnicas</div>
+      <button id="btnCerrarModalHistorial" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer" title="Cerrar">×</button>
+    </div>
+    <div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
+      <iframe id="iframeHistorial" src="" style="width:100%; height:100%; border:none"></iframe>
+    </div>
+  </div>
 </div>
-<div class="modal-body" style="padding:0; height: calc(85vh - 56px)">
-<iframe id="iframeHistorial" src="" style="width:100%; height:100%; border:none"></iframe>
-</div>
-</div>
-</div>
+</script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
+/* ========== Config / URLs ========== */
 const urlContratoFirmado = "https://cesarjimenezb-design.github.io/Contrato-Ayuda-Tecnica/";
 const urlPrevalidacion = "https://cesarjimenezb-design.github.io/Prevalidacion-entregaAT/";
 const urlHistorialAT = "https://cesarjimenezb-design.github.io/Historial-entrega-AT/";
 
+/* ========== Stock (mapeo) ========== */
 const stockArticulos = {
   "silla de ruedas": true,
   "silla de ruedas estándar": false,
@@ -407,6 +806,7 @@ const stockArticulos = {
   "andador": false
 };
 
+/* ========== Filtrado ========== */
 function filtrarTabla(){
   const institutoFiltro = document.getElementById('filtroInstituto').value.toLowerCase();
   const tipoAyudaFiltro = document.getElementById('tipoAyuda').value.toLowerCase();
@@ -441,6 +841,7 @@ function filtrarTabla(){
   });
 }
 
+/* ========== Limpiar filtros ========== */
 function limpiarFiltros(){
   document.getElementById('filtroInstituto').value = "";
   document.getElementById('especialidad').value = "";
@@ -452,6 +853,7 @@ function limpiarFiltros(){
   filtrarTabla();
 }
 
+/* ========== Ver contrato segun estado (original) ========== */
 function verContratoDesdeFila(fila){
   const estado = fila.querySelector('[data-estado]') ? (fila.querySelector('[data-estado]').getAttribute('data-estado')||'') : '';
   if (estado === 'EMITIDO' || estado === 'COMODATO') {
@@ -470,6 +872,7 @@ function verContratoDesdeFila(fila){
   }
 }
 
+/* ========== Ver indicación (original) ========== */
 function verIndicacionDesdeFila(fila){
   if (!fila) return;
   const correl = fila.cells[0] ? fila.cells[0].textContent.trim() : '';
@@ -521,6 +924,7 @@ function verIndicacionDesdeFila(fila){
   document.getElementById('modalIndicacion').classList.add('active');
 }
 
+/* ========== Click fuera del modal Indicacion lo cierra (original) ========== */
 document.addEventListener('click', function(e){
   const mi = document.getElementById('modalIndicacion');
   if (mi && mi.classList.contains('active')) {
@@ -531,7 +935,8 @@ document.addEventListener('click', function(e){
   }
 });
 
-document.getElementById('btnCerrarModalPDF').addEventListener('click', ()=>{ document.getElementById('modalPDF').classList.remove('active'); document.getElementById('iframePDF').src = ''; });
+/* ========== Cierres rápidos de modales (original) ========== */
+document.getElementById('btnCerrarModalPDF')?.addEventListener('click', ()=>{ document.getElementById('modalPDF').classList.remove('active'); document.getElementById('iframePDF').src = ''; });
 document.getElementById('btnCerrarModalTutor')?.addEventListener('click', ()=>{ document.getElementById('modalTutor').classList.remove('active'); document.getElementById('iframeTutor').src = ''; });
 document.getElementById('btnCerrarModalIndicacion')?.addEventListener('click', ()=> document.getElementById('modalIndicacion').classList.remove('active'));
 document.getElementById('btnCerrarIndicacion')?.addEventListener('click', ()=> document.getElementById('modalIndicacion').classList.remove('active'));
@@ -544,8 +949,8 @@ document.getElementById('btnImprimirIndicacion')?.addEventListener('click', ()=>
   setTimeout(()=>{ w.print(); }, 300);
 });
 
+/* ========== Selección de filas (original) ========== */
 let filaSeleccionada = null;
-
 function activarSeleccionFilas(){
   document.querySelectorAll('#tablaContratosBody tr').forEach(fila=>{
     fila.addEventListener('click', (e)=>{
@@ -561,13 +966,13 @@ function activarSeleccionFilas(){
   });
 }
 
+/* ========== Helpers botones toolbar (original) ========== */
 function setBtn(id,enabled){
   const b = document.getElementById(id);
   if (!b) return;
   if (enabled) { b.removeAttribute('disabled'); b.style.opacity = '1'; }
   else { b.setAttribute('disabled','disabled'); b.style.opacity = '0.45'; }
 }
-
 function obtenerDatosFila(){
   if (!filaSeleccionada) return null;
   const tdEstado = filaSeleccionada.querySelector('[data-estado]');
@@ -576,7 +981,6 @@ function obtenerDatosFila(){
   const paciente = filaSeleccionada.cells[1] ? filaSeleccionada.cells[1].textContent.trim() : '';
   return { estadoContrato, correl, paciente };
 }
-
 function actualizarToolbar(){
   const datos = obtenerDatosFila();
   const botones = ['btnSalud','btnDocumento','btnEditar','btnEliminar','btnCero','btnAccesibilidad','btnTiempo'];
@@ -601,6 +1005,7 @@ function actualizarToolbar(){
   }
 }
 
+/* ========== APLICAR ESTADO ARTICULO (stock + campana colores) ========== */
 function aplicarEstadoArticulo(){
   document.querySelectorAll('#tablaContratosBody tr').forEach(fila=>{
     const tipoAyuda = fila.cells[5] ? fila.cells[5].textContent.trim().toLowerCase() : '';
@@ -630,7 +1035,7 @@ function aplicarEstadoArticulo(){
   });
 }
 
-/* NUEVO: mapeo Estado Fin700 visual */
+/* ========== actualizarEstadoFin700 (original pero con guard DEVUELTO) ========== */
 function actualizarEstadoFin700(){
   document.querySelectorAll('#tablaContratosBody tr').forEach(fila=>{
     const tdEstadoContrato = fila.querySelector('[data-estado]');
@@ -641,6 +1046,14 @@ function actualizarEstadoFin700(){
     const textoStock = fila.querySelector('.estado-articulo') ? fila.querySelector('.estado-articulo').textContent.toLowerCase() : '';
     let texto = '';
     let color = '';
+
+    // NUEVO: si DEVUELTO -> dejar FIN700 en blanco
+    if (estadoContrato === 'DEVUELTO') {
+      tdFin.textContent = '';
+      tdFin.style.fontWeight = '700';
+      tdFin.style.color = '';
+      return;
+    }
 
     if (estadoContrato === 'ANULADO') {
       texto = '';
@@ -664,6 +1077,7 @@ function actualizarEstadoFin700(){
   });
 }
 
+/* ========== Anular (original) ========== */
 let filaParaAnular = null;
 function abrirModalAnular(fila){
   filaParaAnular = fila;
@@ -676,7 +1090,7 @@ function abrirModalAnular(fila){
 }
 document.getElementById('btnCerrarModalAnular').addEventListener('click', ()=> document.getElementById('modalAnular').classList.remove('active'));
 document.getElementById('btnCerrarAnular').addEventListener('click', ()=> document.getElementById('modalAnular').classList.remove('active'));
-document.getElementById('btnConfirmAnular').addEventListener('click', ()=>{
+document.getElementById('btnConfirmAnular').addEventListener('click', ()=>{ // nota: btnConfirmAnular se asigna en original como btnConfirmAnular o btnConfirmAnular?
   if (!filaParaAnular) { alert('No hay fila seleccionada para anular'); return; }
   const motivo = document.getElementById('motivoAnulacion').value;
   const obs = document.getElementById('obsAnulacion').value;
@@ -691,6 +1105,7 @@ document.getElementById('btnConfirmAnular').addEventListener('click', ()=>{
   actualizarEstadoFin700();
 });
 
+/* ========== Agendar (original) ========== */
 function abrirModalAgendar(fila){
   if (!fila) return;
   document.getElementById('actividadAgendar').value = "Entrega ayuda técnica (15 min)";
@@ -701,18 +1116,18 @@ function abrirModalAgendar(fila){
 }
 document.getElementById('btnCerrarModalAgendar').addEventListener('click', ()=> document.getElementById('modalAgendar').classList.remove('active'));
 document.getElementById('btnCancelarAgendar').addEventListener('click', ()=> document.getElementById('modalAgendar').classList.remove('active'));
-document.getElementById('btnGuardarAgendar').addEventListener('click', ()=>{
-  alert('Actividad guardada (demo).');
-  document.getElementById('modalAgendar').classList.remove('active');
-});
+document.getElementById('btnGuardarAgendar').addEventListener('click', ()=>{ alert('Actividad guardada (demo).'); document.getElementById('modalAgendar').classList.remove('active'); });
 
+/* ========== Historial (original) ========== */
 const modalHistorial = document.getElementById('modalHistorial');
 const iframeHistorial = document.getElementById('iframeHistorial');
 const btnCerrarModalHistorial = document.getElementById('btnCerrarModalHistorial');
-btnCerrarModalHistorial.addEventListener('click', ()=>{ modalHistorial.classList.remove('active'); iframeHistorial.src = ''; });
+if (btnCerrarModalHistorial) btnCerrarModalHistorial.addEventListener('click', ()=>{ modalHistorial.classList.remove('active'); iframeHistorial.src = ''; });
 
+/* ========== Inicialización DOMContentLoaded (original flow) ========== */
 document.addEventListener('DOMContentLoaded', ()=>{
 
+  // Mapear estados iniciales según columna de indicación
   document.querySelectorAll('#tablaContratosBody tr').forEach(tr=>{
     const estadoIndicText = tr.cells[8] ? (tr.cells[8].textContent||'').trim().toLowerCase() : '';
     const tdEstado = tr.querySelector('[data-estado]');
@@ -735,9 +1150,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 
+  // aplicar stock / colores campana
   aplicarEstadoArticulo();
+  // calcular FIN700 para cada fila (respetando DEVUELTO por guard anterior)
   actualizarEstadoFin700();
 
+  // rebind botones ver / indicacion (evita listeners duplicados)
   document.querySelectorAll('.ver-btn').forEach(btn=>{
     btn.replaceWith(btn.cloneNode(true));
   });
@@ -753,20 +1171,37 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
   });
 
-  document.querySelectorAll('.btn-indicacion').forEach(btn=>{
-    btn.replaceWith(btn.cloneNode(true));
-  });
-  document.querySelectorAll('.btn-indicacion').forEach(btn=>{
-    btn.addEventListener('click', function(e){
-      const fila = this.closest('tr');
-      if (filaSeleccionada && filaSeleccionada !== fila) filaSeleccionada.classList.remove('seleccionada');
-      filaSeleccionada = fila;
-      fila.classList.add('seleccionada');
-      actualizarToolbar();
+ // Rebind seguro: evita listeners duplicados y usa la función que genera el HTML formateado
+document.querySelectorAll('.btn-indicacion').forEach(btn=>{
+  btn.replaceWith(btn.cloneNode(true));
+});
+document.querySelectorAll('.btn-indicacion').forEach(btn=>{
+  btn.addEventListener('click', function(e){
+    // recuperar la fila que contiene el botón
+    const fila = this.closest('tr');
+    if (!fila) return;
+
+    // mantener única selección visual
+    if (filaSeleccionada && filaSeleccionada !== fila) filaSeleccionada.classList.remove('seleccionada');
+    filaSeleccionada = fila;
+    fila.classList.add('seleccionada');
+
+    // actualizar toolbar (misma lógica original)
+    if (typeof actualizarToolbar === 'function') actualizarToolbar();
+
+    // Llamar a la función original que rellena y abre el modal con HTML formateado
+    if (typeof verIndicacionDesdeFila === 'function') {
       verIndicacionDesdeFila(fila);
-      e.stopPropagation();
-    });
+    } else {
+      // fallback mínimo: abrir modal si por alguna razón la función no existe
+      const mi = document.getElementById('modalIndicacion');
+      if (mi) mi.classList.add('active');
+    }
+
+    e.stopPropagation();
   });
+});
+
 
   activarSeleccionFilas();
 
@@ -793,25 +1228,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
     abrirModalAnular(filaSeleccionada);
   });
 
-  // BOTÓN DEVOLUCIÓN AT (abre modal y luego registra devuelto al enviar formulario)
-  // BOTÓN DEVOLUCIÓN AT
-document.getElementById('btnCero').addEventListener('click', ()=>{
-  // si no hay filaSeleccionada, intenta usar la que tenga la clase .seleccionada
-  if (!filaSeleccionada) {
-    const trSel = document.querySelector('#tablaContratosBody tr.seleccionada');
-    if (trSel) filaSeleccionada = trSel;
-  }
-  if (!filaSeleccionada) {
-    alert('Selecciona una fila para registrar devolución');
-    return;
-  }
-  const tipoAyuda = filaSeleccionada.cells[5] ? filaSeleccionada.cells[5].textContent.trim() : '';
-  document.getElementById('inputArticulo').value = tipoAyuda;
-  document.getElementById('inputCantidad').value = 1;
-  document.getElementById('inputObservacion').value = '';
-  document.getElementById('modalDevolucion').style.display = 'flex';
-});
-
+  /* ======= BOTÓN DEVOLUCIÓN AT (abre modal y luego registra devuelto al enviar formulario) ======= */
+  document.getElementById('btnCero').addEventListener('click', ()=>{
+    // si no hay filaSeleccionada, intenta usar la que tenga la clase .seleccionada
+    if (!filaSeleccionada) {
+      const trSel = document.querySelector('#tablaContratosBody tr.seleccionada');
+      if (trSel) filaSeleccionada = trSel;
+    }
+    if (!filaSeleccionada) {
+      alert('Selecciona una fila para registrar devolución');
+      return;
+    }
+    const tipoAyuda = filaSeleccionada.cells[5] ? filaSeleccionada.cells[5].textContent.trim() : '';
+    document.getElementById('inputArticulo').value = tipoAyuda;
+    document.getElementById('inputCantidad').value = 1;
+    document.getElementById('inputObservacion').value = '';
+    document.getElementById('modalDevolucion').style.display = 'flex';
+  });
 
   document.getElementById('btnAccesibilidad').addEventListener('click', ()=>{
     const d = obtenerDatosFila(); if (!d) return alert('Selecciona una fila');
@@ -837,6 +1270,7 @@ document.getElementById('btnCero').addEventListener('click', ()=>{
   ['filtroInstituto','especialidad','profesional','tipoAyuda','fechaDesde','fechaHasta','filterEstado']
     .forEach(id => document.getElementById(id).addEventListener('change', filtrarTabla));
 
+  // SUBMIT formDevolucion (REPARADO)
   document.getElementById('formDevolucion').addEventListener('submit', function(e){
     e.preventDefault();
     if (!filaSeleccionada) {
@@ -844,16 +1278,32 @@ document.getElementById('btnCero').addEventListener('click', ()=>{
       return;
     }
     filaSeleccionada.classList.add('devuelto');
-    alert('Devolución registrada (demo).');
+    const tdEstado = filaSeleccionada.querySelector('[data-estado]');
+    if (tdEstado) {
+      tdEstado.setAttribute('data-estado','DEVUELTO');
+      tdEstado.textContent = 'DEVUELTO';
+    }
+    // Vaciar FIN700 para esta fila
+    const tdFin = filaSeleccionada.cells[10];
+    if (tdFin) {
+      tdFin.textContent = '';
+    }
     document.getElementById('modalDevolucion').style.display = 'none';
+    alert('Devolución registrada (demo).');
+    // actualizar estados globales por si aplica
+    aplicarEstadoArticulo();
     actualizarEstadoFin700();
   });
+
   document.getElementById('btnCerrarModalDevolucion').addEventListener('click', function(){
     document.getElementById('modalDevolucion').style.display = 'none';
   });
 
   filtrarTabla();
 });
+
+</script>
+
 </script>
 </body>
 </html>
